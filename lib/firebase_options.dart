@@ -17,29 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -60,4 +48,42 @@ class DefaultFirebaseOptions {
     storageBucket: 'tableturn-6e978.firebasestorage.app',
     iosBundleId: 'com.example.tableturnProject0',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyD26Ef3mjaDTA01JQ-gh6flhdmz5Jv6KuM',
+    appId: '1:239925739370:web:4ffef91003e6ca81302f13',
+    messagingSenderId: '239925739370',
+    projectId: 'tableturn-6e978',
+    authDomain: 'tableturn-6e978.firebaseapp.com',
+    storageBucket: 'tableturn-6e978.firebasestorage.app',
+    measurementId: 'G-46Y7ELLF9Y',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBMzHspuvj68CMoYuE66s3L-B7BXz9E7NM',
+    appId: '1:239925739370:ios:e22affff5426b262302f13',
+    messagingSenderId: '239925739370',
+    projectId: 'tableturn-6e978',
+    storageBucket: 'tableturn-6e978.firebasestorage.app',
+    iosBundleId: 'com.example.tableturnProject0',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyB4x1LKzKcsiHwVXMxEVFYa7kv2sFe5zWY',
+    appId: '1:239925739370:android:8a6e1adc0a2bb2d5302f13',
+    messagingSenderId: '239925739370',
+    projectId: 'tableturn-6e978',
+    storageBucket: 'tableturn-6e978.firebasestorage.app',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyD26Ef3mjaDTA01JQ-gh6flhdmz5Jv6KuM',
+    appId: '1:239925739370:web:c27059cdf87d06e0302f13',
+    messagingSenderId: '239925739370',
+    projectId: 'tableturn-6e978',
+    authDomain: 'tableturn-6e978.firebaseapp.com',
+    storageBucket: 'tableturn-6e978.firebasestorage.app',
+    measurementId: 'G-4MSMJYENEY',
+  );
+
 }

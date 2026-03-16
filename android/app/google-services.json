@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "239925739370",
+    "project_id": "tableturn-6e978",
+    "storage_bucket": "tableturn-6e978.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239925739370:android:8a6e1adc0a2bb2d5302f13",
+        "android_client_info": {
+          "package_name": "com.example.tableturn_project0"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4x1LKzKcsiHwVXMxEVFYa7kv2sFe5zWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
