@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/AuthService.dart';
+import 'package:tableturn_project0/Widgets/LoginButton.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,21 +35,23 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: true,
             ),
             SizedBox(height: 32.0),
-            ElevatedButton(
+            LoginButton(
+              text: 'Login',
               onPressed: () async {
-                final email = _emailController.text.trim();
-                final password = _passwordController.text.trim();
-
-                try{
-                  await AuthService().signIn(email, password);
-                }catch(e){{
+                try {
+                  UserCredential userCredential = await AuthService().signIn(
+                    _emailController.text,
+                    _passwordController.text,
+                  );
+                  // Navigate to dashboard or show success message
+                } catch (e) {
+                  // Show error message
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Login failed: $e')),
                   );
-                }}
+                }
               },
-              child: Text('Login'),
-            ),
+            ),                                                                                                          
           ],
         ),
       ),
