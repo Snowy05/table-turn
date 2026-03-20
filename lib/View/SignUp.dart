@@ -15,6 +15,9 @@ class _SignUpPageState extends State<SignUpPage> {
   //logic here
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +37,23 @@ class _SignUpPageState extends State<SignUpPage> {
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Name'),
+            ),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _phoneNumberController,
+              decoration: InputDecoration(labelText: 'Phone Number'),
+              keyboardType: TextInputType.phone,
+            ),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _ageController,
+              decoration: InputDecoration(labelText: 'Age'),
+              keyboardType: TextInputType.number,
+            ),
             SizedBox(height: 32.0),
             LoginButton(text: 'Signup', onPressed: 
               () async {
@@ -41,7 +61,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   UserCredential userCredential = await AuthService().signUp(
                     _emailController.text,
                     _passwordController.text,
+                    _nameController.text,
+                    _phoneNumberController.text,
+                    _ageController.text,
                   );
+                  //if signup success go to login page else show error message
+                  Navigator.pushReplacementNamed(context, '/login');
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Sign up failed: $e')),

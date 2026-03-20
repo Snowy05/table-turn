@@ -1,14 +1,43 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import '../Model/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //signup method, (Future) promises return object or an error
-  Future<UserCredential> signUp(String email, String password) async {
-    return await _auth.createUserWithEmailAndPassword(
+  Future<UserCredential> signUp(
+    String email, 
+    String password,
+    String name,
+    String phoneNumber,
+    String age,
+    ) async {
+    UserCredential result = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
+
+    User? firebaseUser = result.user;
+
+    if (firebaseUser != null){
+      AppUser appUser = AppUser(
+        uid: firebaseUser.uid,
+        email: firebaseUser.email ?? '',
+        name: name,
+        phoneNumber: phoneNumber,
+        age: age,
+        favouriteGames: [],
+        loyaltyPoints: 0,
+        createdAt: DateTime.now(),
+      );
+      await FirebaseFirestore.instance
+        .collection('users')
+        .doc(appUser.uid)
+        .set(appUser.toMap());
+      // Here you would typically save the appUser to Firestore or another database
+    }
+    return result;
   }
 
   //signin method, nothing to see here
