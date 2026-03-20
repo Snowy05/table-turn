@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Booking {
+class BookingModel{
   final String uid;
   final String userId;
   final String tableId;
@@ -11,7 +11,7 @@ class Booking {
   final String status;
   final DateTime createdAt;
 
-  Booking({
+  BookingModel({
     required this.uid,
     required this.userId,
     required this.tableId,
@@ -27,8 +27,8 @@ class Booking {
         assert(numberOfPeople > 0, 'numberOfPeople must be greater than 0'),
         assert(status == 'pending' || status == 'confirmed' || status == 'cancelled', 'status must be one of: pending, confirmed, cancelled');
 
-  factory Booking.fromMap(Map<String, dynamic> data, String documentId) {
-    return Booking(
+  factory BookingModel.fromMap(Map<String, dynamic> data, String documentId) {
+    return BookingModel(
       uid: documentId,
       userId: data['userId'] ?? '',
       tableId: data['tableId'] ?? '',

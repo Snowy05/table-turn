@@ -1,5 +1,3 @@
-import 'Options/gameOptions.dart';
-
 class GameModel {
   final String uid;
   final String gameName;
