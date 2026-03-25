@@ -66,7 +66,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     _ageController.text,
                   );
                   //if signup success go to login page else show error message
-                  Navigator.pushReplacementNamed(context, '/login');
+                  Navigator.pushReplacementNamed(context, '/dashboard');
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Sign up failed: $e')),

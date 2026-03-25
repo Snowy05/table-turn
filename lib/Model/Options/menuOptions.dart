@@ -1,3 +1,6 @@
+// This file contains the options for the menu item model. will be used for filter, sorting, tags etc.
+// These options are used to populate the dropdown menus in the add/edit menu item screen.
+
 const List<String> dietaryTags = [
   'Vegan',
   'Vegetarian',

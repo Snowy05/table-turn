@@ -34,9 +34,9 @@ class BookingModel{
       tableId: data['tableId'] ?? '',
       bookingStartTime: (data['bookingStartTime'] as Timestamp).toDate(),
       bookingEndTime: (data['bookingEndTime'] as Timestamp).toDate(),
-      numberOfPeople: data['numberOfPeople'] ?? 0,
-      specialRequests: data['specialRequests'] ?? '',
-      status: data['status'] ?? 'pending',
+      numberOfPeople: data['numberOfPeople'] ?? 1,
+      specialRequests: data['specialRequests'] ?? 'None',
+      status: data['status'] ?? 'Pending',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
     );
     
