@@ -45,6 +45,13 @@ class DashboardPage extends StatelessWidget {
               Center(child: Text('Welcome, ${appUser.name}!')),
               SizedBox(height: 20),
               WidgetMenubttn(
+                label: 'View Board Games',
+                imageAsset: 'assets/images/board_games.png',
+                onTap: () {
+                  Navigator.pushNamed(context, '/boardgames');
+                },
+              ),
+              WidgetMenubttn(
                 label: 'Book a Table',
                 imageAsset: 'assets/images/book_table.png',
                 onTap: () {

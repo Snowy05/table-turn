@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tableturn_project0/View/BoardGame/BoardGame.dart';
 
 import 'firebase_options.dart';
 // Importing the views and controller
@@ -24,12 +25,11 @@ class MyApp extends StatelessWidget {
       secondary: secondaryColor,
     ),
     cardTheme: CardThemeData(
-      color: Colors.brown,
+      color: Colors.brown[110],
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.black, width: 10),
+        side: BorderSide(color: Colors.black, width: 2),
       ),
-
     ),
   );
 
@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignUpPage(),
         '/login': (context) => LoginPage(),
         '/dashboard': (context) => DashboardPage(),
+        '/boardgames': (context) => BoardGame(),
       },
     );
   }

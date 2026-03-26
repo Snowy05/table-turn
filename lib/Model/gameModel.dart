@@ -6,7 +6,8 @@ class GameModel {
   final String description;
   final List<String> categories;
   final List<String> ageGroups;
-  final String imageUrl;
+  final String imageAsset; // Local asset path
+  final String imageUrl; // Network image URL
   final String complexity;
   final List<String> playTimes;
   final List<String> tags;
@@ -23,6 +24,7 @@ class GameModel {
     required this.description,
     required this.categories,
     required this.ageGroups,
+    required this.imageAsset,
     required this.imageUrl,
     required this.complexity,
     required this.playTimes,
@@ -42,6 +44,7 @@ class GameModel {
       description: data['description'] ?? '',
       categories: List<String>.from(data['categories'] ?? []),
       ageGroups: List<String>.from(data['ageGroups'] ?? []),
+      imageAsset: data['imageAsset'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
       complexity: data['complexity'] ?? '',
       playTimes: List<String>.from(data['playTimes'] ?? []),
@@ -60,6 +63,7 @@ class GameModel {
       'description': description,
       'categories': categories,
       'ageGroups': ageGroups,
+      'imageAsset': imageAsset,
       'imageUrl': imageUrl,
       'complexity': complexity,
       'playTimes': playTimes,

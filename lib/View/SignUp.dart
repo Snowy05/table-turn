@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/AuthService.dart';
+import 'package:tableturn_project0/Controller/GameService.dart';
+import 'package:tableturn_project0/Model/gameModel.dart';
 import 'package:tableturn_project0/Widgets/LoginButton.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -18,6 +20,28 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
+
+  //testing game
+//   final game = GameModel(
+//   uid: '', 
+//   gameName: 'Catan',
+//   minPlayers: 3,
+//   maxPlayers: 4,
+//   description: 'A classic strategy game.',
+//   categories: ['Strategy', 'Family'],
+//   ageGroups: ['12+'],
+//   imageAsset: 'assets/images/catan.jpg',
+//   imageUrl: '',
+//   complexity: 'Medium',
+//   playTimes: ['1-2 hours'],
+//   tags: ['Classic', 'Strategy Game'],
+//   isAvailable: true,
+//   isAvailableForBooking: true,
+//   availabilityStatus: 'Available',
+//   quantityInStock: 5,
+// );
+
+
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,6 +81,19 @@ class _SignUpPageState extends State<SignUpPage> {
             SizedBox(height: 32.0),
             Row(
               children: [
+                //Testing purposes, adding games
+                // LoginButton(text: 'Add game', onPressed: () async{
+                //   try{
+                //     await Gameservice().addGame(game);
+                //     ScaffoldMessenger.of(context).showSnackBar(
+                //       SnackBar(content: Text('Game added successfully')),
+                //     );
+                //   }catch(e){
+                //     ScaffoldMessenger.of(context).showSnackBar(
+                //       SnackBar(content: Text('Failed to add game: $e')),
+                //     );
+                //   }
+                // }),
                 LoginButton(text: 'Back to Login', onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 }),
