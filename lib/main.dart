@@ -23,6 +23,14 @@ class MyApp extends StatelessWidget {
       primary: primaryColor,
       secondary: secondaryColor,
     ),
+    cardTheme: CardThemeData(
+      color: Colors.brown,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Colors.black, width: 10),
+      ),
+
+    ),
   );
 
   MyApp({super.key});
@@ -31,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'TableTurn',
       theme: lightTheme,
-      home: SignUpPage(),
+      home: LoginPage(),
       routes: {
         //  routes for navigation
         '/signup': (context) => SignUpPage(),

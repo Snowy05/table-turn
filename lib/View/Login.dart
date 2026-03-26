@@ -35,22 +35,33 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: true,
             ),
             SizedBox(height: 32.0),
-            LoginButton(
-              text: 'Login',
-              onPressed: () async {
-                try {
-                  UserCredential userCredential = await AuthService().signIn(
-                    _emailController.text,
-                    _passwordController.text,
-                  );
-                  // Navigate to dashboard or show success message
-                } catch (e) {
-                  // Show error message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Login failed: $e')),
-                  );
-                }
-              },
+            Row(
+              children: [
+                LoginButton(
+                  text: 'Back to Sign Up',
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/signup');
+                  },
+                ),
+                SizedBox(width: 16.0),
+                LoginButton(
+                  text: 'Login',
+                  onPressed: () async {
+                    try {
+                      UserCredential userCredential = await AuthService().signIn(
+                        _emailController.text,
+                        _passwordController.text,
+                      );
+                      Navigator.pushReplacementNamed(context, '/dashboard');
+                    } catch (e) {
+                      // Show error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Login failed: $e')),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),                                                                                                          
           ],
         ),

@@ -55,24 +55,32 @@ class _SignUpPageState extends State<SignUpPage> {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 32.0),
-            LoginButton(text: 'Signup', onPressed: 
-              () async {
-                try {
-                  UserCredential userCredential = await AuthService().signUp(
-                    _emailController.text,
-                    _passwordController.text,
-                    _nameController.text,
-                    _phoneNumberController.text,
-                    _ageController.text,
-                  );
-                  //if signup success go to login page else show error message
-                  Navigator.pushReplacementNamed(context, '/dashboard');
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Sign up failed: $e')),
-                  );
-                }
-              },
+            Row(
+              children: [
+                LoginButton(text: 'Back to Login', onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/login');
+                }),
+                SizedBox(width: 16.0),
+                LoginButton(text: 'Signup', onPressed: 
+                  () async {
+                    try {
+                      UserCredential userCredential = await AuthService().signUp(
+                        _emailController.text,
+                        _passwordController.text,
+                        _nameController.text,
+                        _phoneNumberController.text,
+                        _ageController.text,
+                      );
+                      //if signup success go to login page else show error message
+                      Navigator.pushReplacementNamed(context, '/dashboard');
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Sign up failed: $e')),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
           ],
         ),

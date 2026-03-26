@@ -22,7 +22,12 @@ class LoginButton extends StatelessWidget {
       )
       ),
       onPressed: onPressed,
-      child: Text('Login'),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: colorScheme.onPrimary,
+        ),
+      ),
     );
   }
 }
