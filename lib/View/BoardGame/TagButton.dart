@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Filterbttn extends StatelessWidget {
+class Tagbttn extends StatelessWidget {
   final Set<String> selectedTags;
   final List<String> allTags;
   //set string used to store selected tags for filtering, list of all available tags, and a callback to apply the filter
   final ValueChanged<Set<String>> onApply;
   final String label;
 
-  const Filterbttn({
+  const Tagbttn({
     super.key,
     required this.selectedTags,
     required this.allTags,
@@ -32,19 +32,23 @@ class Filterbttn extends StatelessWidget {
                   children: [
                     Wrap(
                       spacing: 8,
-                      children: allTags.map<Widget>((tag) => FilterChip(
-                        label: Text(tag),
-                        selected: tempSelected.contains(tag),
-                        onSelected: (isSelected) {
-                          setModalState(() {
-                            if (isSelected) {
-                              tempSelected.add(tag);
-                            } else {
-                              tempSelected.remove(tag);
-                            }
-                          });
-                        },
-                      )).toList(),
+                      children: allTags
+                          .map<Widget>(
+                            (tag) => FilterChip(
+                              label: Text(tag),
+                              selected: tempSelected.contains(tag),
+                              onSelected: (isSelected) {
+                                setModalState(() {
+                                  if (isSelected) {
+                                    tempSelected.add(tag);
+                                  } else {
+                                    tempSelected.remove(tag);
+                                  }
+                                });
+                              },
+                            ),
+                          )
+                          .toList(),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/Model/Options/gameOptions.dart';
+import 'package:tableturn_project0/View/BoardGame/BoardGameCardOpen.dart';
 import 'package:tableturn_project0/Widgets/BottomNav.dart';
 import '../../Model/gameModel.dart';
 import '../../Controller/GameService.dart';
 import 'BoardGameCard.dart';
-import '../../Widgets/Filterbttn.dart';
+import 'TagButton.dart';
 
 class BoardGame extends StatefulWidget {
   const BoardGame({super.key});
@@ -29,7 +30,7 @@ class _BoardGameState extends State<BoardGame> {
             child: Row(
               children: [
                 Expanded(
-                  child: Filterbttn(
+                  child: Tagbttn(
                     selectedTags: selectedTags,
                     allTags: allTags,
                     onApply: (newTags) {
@@ -43,24 +44,20 @@ class _BoardGameState extends State<BoardGame> {
                 DropdownButton<String>(
                   value: selectedComplexity,
                   hint: const Text('Complexity'),
-                  items:[
-                    DropdownMenuItem<String>(
-                      value: null,
-                      child: Text('All')
-                    ),
+                  items: [
+                    DropdownMenuItem<String>(value: null, child: Text('All')),
                     ...allComplexities
-                      .map(
-                        (complexity) => DropdownMenuItem(
-                          value: complexity,
-                          child: Text(complexity),
-                        ),
-                      )
-                      .toList(),
+                        .map(
+                          (complexity) => DropdownMenuItem(
+                            value: complexity,
+                            child: Text(complexity),
+                          ),
+                        )
+                        .toList(),
                   ],
                   onChanged: (value) {
                     setState(() {
                       selectedComplexity = value;
-                    
                     });
                   },
                   isExpanded: false,
@@ -69,30 +66,33 @@ class _BoardGameState extends State<BoardGame> {
                 ),
                 const SizedBox(width: 12),
                 DropdownButton<String>(
-                      value: selectedAgeGroup,
-                      hint: const Text('Age Group'),
+                  value: selectedAgeGroup,
+                  hint: const Text('Age Group'),
 
-                      items: [
-                        DropdownMenuItem<String>(
-                          // Option to show all age groups when no specific group is selected
-                          value: null,
-                          child: Text('All Ages'),
-                        ),
-                          // using spread operator to add age group options from the list "..."
-                        ...allAgeGroups.map((ageGroup) => DropdownMenuItem<String>(
+                  items: [
+                    DropdownMenuItem<String>(
+                      //Option to show all age groups when no specific group is selected
+                      value: null,
+                      child: Text('All Ages'),
+                    ),
+                    // using spread operator to add age group options from the list "..."
+                    ...allAgeGroups
+                        .map(
+                          (ageGroup) => DropdownMenuItem<String>(
                             value: ageGroup,
                             child: Text(ageGroup),
-                          )).toList(),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          selectedAgeGroup = value;
-                        });
-                      },
-                      isExpanded: false,
-                      underline: Container(height: 2, color: Colors.brown),
-                      style: const TextStyle(fontSize: 16, color: Colors.brown),
-                      
+                          ),
+                        )
+                        .toList(),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedAgeGroup = value;
+                    });
+                  },
+                  isExpanded: false,
+                  underline: Container(height: 2, color: Colors.brown),
+                  style: const TextStyle(fontSize: 16, color: Colors.brown),
                 ),
               ],
             ),
@@ -139,7 +139,18 @@ class _BoardGameState extends State<BoardGame> {
                   itemCount: filteredGames.length,
                   itemBuilder: (context, index) {
                     final game = filteredGames[index];
-                    return BoardGameCard(game: game);
+                    //here using the custom card for pop up
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) =>
+                              Dialog(child: BoardGameCardOpen(game: game)),
+                        );
+                      },
+                      child: BoardGameCard(game: game),
+                    );
+                    // return BoardGameCard(game: game);
                   },
                 );
               },
