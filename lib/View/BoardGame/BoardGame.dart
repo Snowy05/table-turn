@@ -15,25 +15,88 @@ class BoardGame extends StatefulWidget {
 
 class _BoardGameState extends State<BoardGame> {
   Set<String> selectedTags = {};
+  String? selectedComplexity;
+  String? selectedAgeGroup;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Board Games')),
-      //updates in real time for boardgames
       body: Column(
         children: [
-         Padding(padding: const EdgeInsets.all(16.0),
-         child: Filterbttn(
-            selectedTags: selectedTags,
-            allTags: allTags,
-            onApply: (newTags) {
-              setState(() {
-                selectedTags = newTags;
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Filterbttn(
+                    selectedTags: selectedTags,
+                    allTags: allTags,
+                    onApply: (newTags) {
+                      setState(() {
+                        selectedTags = newTags;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                DropdownButton<String>(
+                  value: selectedComplexity,
+                  hint: const Text('Complexity'),
+                  items:[
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('All')
+                    ),
+                    ...allComplexities
+                      .map(
+                        (complexity) => DropdownMenuItem(
+                          value: complexity,
+                          child: Text(complexity),
+                        ),
+                      )
+                      .toList(),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedComplexity = value;
+                    
+                    });
+                  },
+                  isExpanded: false,
+                  underline: Container(height: 2, color: Colors.brown),
+                  style: const TextStyle(fontSize: 16, color: Colors.brown),
+                ),
+                const SizedBox(width: 12),
+                DropdownButton<String>(
+                      value: selectedAgeGroup,
+                      hint: const Text('Age Group'),
+
+                      items: [
+                        DropdownMenuItem<String>(
+                          // Option to show all age groups when no specific group is selected
+                          value: null,
+                          child: Text('All Ages'),
+                        ),
+                          // using spread operator to add age group options from the list "..."
+                        ...allAgeGroups.map((ageGroup) => DropdownMenuItem<String>(
+                            value: ageGroup,
+                            child: Text(ageGroup),
+                          )).toList(),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedAgeGroup = value;
+                        });
+                      },
+                      isExpanded: false,
+                      underline: Container(height: 2, color: Colors.brown),
+                      style: const TextStyle(fontSize: 16, color: Colors.brown),
+                      
+                ),
+              ],
+            ),
           ),
-         ),
           Expanded(
             child: StreamBuilder<List<GameModel>>(
               stream: Gameservice().getGames(),
@@ -46,24 +109,37 @@ class _BoardGameState extends State<BoardGame> {
                 }
                 final games = snapshot.data ?? [];
 
-
-
-
-                // Filter games based on selected tags
-                //NEED TO FIX FILTER MULTI SELECTION
+                // Multi-criteria filtering
                 List<GameModel> filteredGames = games.where((game) {
-                if (selectedTags.isEmpty) return true;
-                return game.tags.any((tag) => selectedTags.contains(tag));
+                  // Filter by age group if selected
+                  if (selectedAgeGroup != null &&
+                      selectedAgeGroup!.isNotEmpty &&
+                      game.ageGroups != selectedAgeGroup) {
+                    return false;
+                  }
+                  ;
+                  // Filter by complexity if selected
+                  if (selectedComplexity != null &&
+                      selectedComplexity!.isNotEmpty &&
+                      game.complexity != selectedComplexity) {
+                    return false;
+                  }
+                  // Filter by tags if any selected
+                  if (selectedTags.isNotEmpty &&
+                      !game.tags.any((tag) => selectedTags.contains(tag))) {
+                    return false;
+                  }
+                  return true;
                 }).toList();
-            
-                 if (filteredGames.isEmpty) {
-                return const Center(child: Text('No games found.'));
+
+                if (filteredGames.isEmpty) {
+                  return const Center(child: Text('No games found.'));
                 }
                 return ListView.builder(
                   itemCount: filteredGames.length,
                   itemBuilder: (context, index) {
-                  final game = filteredGames[index];
-                  return BoardGameCard(game: game);
+                    final game = filteredGames[index];
+                    return BoardGameCard(game: game);
                   },
                 );
               },
