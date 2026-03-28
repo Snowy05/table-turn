@@ -4,6 +4,7 @@ import 'package:tableturn_project0/Widgets/BottomNav.dart';
 import '../../Model/gameModel.dart';
 import '../../Controller/GameService.dart';
 import 'BoardGameCard.dart';
+import '../../Widgets/Filterbttn.dart';
 
 class BoardGame extends StatefulWidget {
   const BoardGame({super.key});
@@ -22,26 +23,17 @@ class _BoardGameState extends State<BoardGame> {
       //updates in real time for boardgames
       body: Column(
         children: [
-          Wrap(
-            spacing: 8,
-            children: allTags
-                .map<Widget>(
-                  (tag) => FilterChip(
-                    label: Text(tag),
-                    selected: selectedTags.contains(tag),
-                    onSelected: (isSelected) {
-                      setState(() {
-                        if (isSelected) {
-                          selectedTags.add(tag);
-                        } else {
-                          selectedTags.remove(tag);
-                        }
-                      });
-                    },
-                  ),
-                )
-                .toList(),
+         Padding(padding: const EdgeInsets.all(16.0),
+         child: Filterbttn(
+            selectedTags: selectedTags,
+            allTags: allTags,
+            onApply: (newTags) {
+              setState(() {
+                selectedTags = newTags;
+              });
+            },
           ),
+         ),
           Expanded(
             child: StreamBuilder<List<GameModel>>(
               stream: Gameservice().getGames(),
