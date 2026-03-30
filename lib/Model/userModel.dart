@@ -9,6 +9,7 @@ class AppUser {
   final List<String> favouriteGames;
   final int loyaltyPoints;
   final DateTime createdAt;
+  final String? profilePicUrl;
 
   AppUser({
     required this.uid,
@@ -19,11 +20,12 @@ class AppUser {
     required this.favouriteGames,
     required this.loyaltyPoints,
     required this.createdAt,
+    this.profilePicUrl,
   });
 
   //constructor to create user from firestore document
 
-  factory AppUser.fromMap(Map<String, dynamic> data, String documentId){
+  factory AppUser.fromMap(Map<String, dynamic> data, String documentId) {
     return AppUser(
       uid: documentId,
       email: data['email'] ?? '',
@@ -33,9 +35,10 @@ class AppUser {
       favouriteGames: List<String>.from(data['favouriteGames'] ?? []),
       loyaltyPoints: data['loyaltyPoints'] ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      profilePicUrl: data['profilePicUrl'],
     );
   }
-//converting user from firestore data
+  //converting user from firestore data
   Map<String, dynamic> toMap() {
     return {
       'email': email,
@@ -45,6 +48,7 @@ class AppUser {
       'favouriteGames': favouriteGames,
       'loyaltyPoints': loyaltyPoints,
       'createdAt': createdAt,
+      if (profilePicUrl != null) 'profilePicUrl': profilePicUrl,
     };
   }
 }
