@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Tagbttn extends StatelessWidget {
   final Set<String> selectedTags;
   final List<String> allTags;
-  //set string used to store selected tags for filtering, list of all available tags, and a callback to apply the filter
+  //set string used to store selected tags for filtering, list of all available tags and a callback to apply the filter
   final ValueChanged<Set<String>> onApply;
   final String label;
 
@@ -16,7 +16,7 @@ class Tagbttn extends StatelessWidget {
   });
 
   @override
-  // Custom button that opens a modal bottom sheet with filter options
+  //custom button that opens a modal bottom sheet with filter options
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
