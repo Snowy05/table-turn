@@ -55,7 +55,7 @@ class DashboardPage extends StatelessWidget {
                 label: 'Book a Table',
                 imageAsset: 'assets/images/book_table.png',
                 onTap: () {
-                  Navigator.pushNamed(context, '/booking');
+                  Navigator.pushNamed(context, '/bookings');
                 },
               ),
               WidgetMenubttn(

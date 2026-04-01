@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGame.dart';
+import 'package:tableturn_project0/View/Booking/BookingPage.dart';
 import 'package:tableturn_project0/View/ProfileView.dart';
 
 import 'firebase_options.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => DashboardPage(),
         '/boardgames': (context) => BoardGame(),
         '/profile': (context) => ProfileView(),
+        '/bookings': (context) => BookingPage(), // Placeholder for booking page
       },
     );
   }
