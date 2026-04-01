@@ -3,6 +3,8 @@ import 'package:tableturn_project0/Controller/BookingService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/TableAvailabilityService.dart';
 import 'package:tableturn_project0/Model/bookingModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tableturn_project0/Model/gameModel.dart';
 import 'package:tableturn_project0/View/Booking/SlotPickerModal.dart';
 import 'package:tableturn_project0/Widgets/BottomNav.dart';
 
@@ -16,40 +18,82 @@ class BookingPage extends StatefulWidget {
 class _BookingPageState extends State<BookingPage> {
   DateTime? _selectedDate = DateTime.now(); // default to today
   String? _selectedTable = 'table1'; // default to first table
-  String? _selectedSlot; 
+  String? _selectedSlot;
   int _duration = 1; // default duration in hours
   int _guests = 1; // default number of guests
-  String? _selectedBoardgame = 'None'; // for game selection, if needed, as of now selected none
+  String? _selectedBoardgame =
+      'None'; // for game selection, if needed, as of now selected none
   final TextEditingController _specialRequestsController =
       TextEditingController();
- // This function will get the slots needed for the booking duration, e.g., if the user selects 12:00 and a duration of 3 hours, it will return ['12:00', '14:00', '16:00']
-  List<String> getSlotsForDuration(String startSlot, int duration) {
-  final slotTimes = defaultSlots;
-  final startIdx = slotTimes.indexOf(startSlot);
-  if (startIdx == -1) return [];
-  // Collect slots for the duration (e.g., 10:00, 12:00, 14:00 for 3 hours)
-  return slotTimes.skip(startIdx).take(duration).toList();
-}
+  List<GameModel> _availableBoardgames = [];
+  bool _loadingBoardgames = false;
 
-  Future<void> _submitBooking() async {
-  if (_selectedDate == null || _selectedTable == null || _selectedSlot == null) return;
-
-  final dateStr = _selectedDate!.toIso8601String().split('T')[0]; // T is used to split date and time, we only need the date part for fetching availability
-  final availableSlots = await Tableavailabilityservice().getAvailableSlots(dateStr, _selectedTable!);
-
-  // Get all slots needed for the booking duration
-  final slotsNeeded = getSlotsForDuration(_selectedSlot!, _duration);
-
-  // Check if all slots are available
-  final allAvailable = slotsNeeded.every((slot) => availableSlots.contains(slot));
-  if (!allAvailable) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Sorry, one or more slots in your booking duration are no longer available.')),
-    );
-    return;
+  // Fetch available boardgames from Firestore
+  Future<void> _fetchAvailableBoardgames() async {
+    setState(() {
+      _loadingBoardgames = true;
+    });
+    final snapshot = await FirebaseFirestore.instance
+        .collection('boardgames')
+        .where('isAvailableForBooking', isEqualTo: true)
+        .get();
+    final games = snapshot.docs
+        .map((doc) => GameModel.fromMap(doc.data(), doc.id))
+        .toList();
+    setState(() {
+      _availableBoardgames = games;
+      _loadingBoardgames = false;
+    });
   }
 
-    // Check slot availability before booking
+  @override
+  void initState() {
+    super.initState();
+    _fetchAvailableBoardgames();
+  }
+
+  //this function will get the slots needed for the booking duration, e.g., if the user selects 12:00 and a duration of 3 hours, it will return ['12:00', '14:00', '16:00']
+  List<String> getSlotsForDuration(String startSlot, int duration) {
+    final slotTimes = defaultSlots;
+    final startIdx = slotTimes.indexOf(startSlot);
+    if (startIdx == -1) return [];
+    //collect slots for the duration (e.g., 10:00, 12:00, 14:00 for 3 hours)
+    return slotTimes.skip(startIdx).take(duration).toList();
+  }
+
+  Future<void> _submitBooking() async {
+    if (_selectedDate == null ||
+        _selectedTable == null ||
+        _selectedSlot == null)
+      return;
+
+    final dateStr = _selectedDate!.toIso8601String().split(
+      'T',
+    )[0]; //rT is used to split date and time, we only need the date part for fetching availability
+    final availableSlots = await Tableavailabilityservice().getAvailableSlots(
+      dateStr,
+      _selectedTable!,
+    );
+
+    //get all slots needed for the booking duration
+    final slotsNeeded = getSlotsForDuration(_selectedSlot!, _duration);
+
+    //gcheck if all slots are available
+    final allAvailable = slotsNeeded.every(
+      (slot) => availableSlots.contains(slot),
+    );
+    if (!allAvailable) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Sorry, one or more slots in your booking duration are no longer available.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    //Check slot availability before booking
     if (!availableSlots.contains(_selectedSlot)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sorry, this slot is no longer available.')),
@@ -87,39 +131,47 @@ class _BookingPageState extends State<BookingPage> {
       createdAt: DateTime.now(),
     );
 
-   try {
-    await BookingService().createBooking(booking);
-    // Remove all slots covered by the booking
-    for (final slot in slotsNeeded) {
-      await Tableavailabilityservice().bookSlot(dateStr, _selectedTable!, slot);
+    try {
+      await BookingService().createBooking(booking);
+      // Remove all slots covered by the booking
+      for (final slot in slotsNeeded) {
+        await Tableavailabilityservice().bookSlot(
+          dateStr,
+          _selectedTable!,
+          slot,
+        );
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Booking successful!')));
+      // Optionally reset form or navigate away
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Booking failed: $e')));
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Booking successful!')),
-    );
-    // Optionally reset form or navigate away
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Booking failed: $e')),
-    );
   }
-}
+
   // slotpicker modal here
   void _showSlotPicker() async {
-  if (_selectedTable == null || _selectedDate == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Please select a date and table first!')),
+    if (_selectedTable == null || _selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select a date and table first!')),
+      );
+      return;
+    }
+    final dateStr = _selectedDate!.toIso8601String().split('T')[0];
+    final availableSlots = await Tableavailabilityservice().getAvailableSlots(
+      dateStr,
+      _selectedTable!,
     );
-    return;
-  }
-  final dateStr = _selectedDate!.toIso8601String().split('T')[0];
-  final availableSlots = await Tableavailabilityservice().getAvailableSlots(dateStr, _selectedTable!);
 
-  String? picked = await showModalBottomSheet<String>(
-    context: context,
-    builder: (context) => SlotPickerModal(slots: availableSlots),
-  );
-  if (picked != null) setState(() => _selectedSlot = picked);
-}
+    String? picked = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SlotPickerModal(slots: availableSlots),
+    );
+    if (picked != null) setState(() => _selectedSlot = picked);
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,18 +247,27 @@ class _BookingPageState extends State<BookingPage> {
             ),
             SizedBox(height: 16),
 
-            // Boardgame (placeholder for now)
+            // Boardgame (from Firestore, only available for booking and the quantity in stock is greater than 0)
             Text('Boardgame (optional)'),
-            DropdownButton<String>(
-              value: _selectedBoardgame,
-              hint: Text('Choose Boardgame'),
-              items: ['None', 'Catan', 'Chess', 'Monopoly']
-                  .map(
-                    (game) => DropdownMenuItem(value: game, child: Text(game)),
-                  )
-                  .toList(),
-              onChanged: (val) => setState(() => _selectedBoardgame = val),
-            ),
+            _loadingBoardgames
+                ? CircularProgressIndicator()
+                : DropdownButton<String>(
+                    value: _selectedBoardgame,
+                    hint: Text('Choose Boardgame'),
+                    items: [
+                      DropdownMenuItem(value: 'None', child: Text('None')),
+                      ..._availableBoardgames.map(
+                        (game) => DropdownMenuItem(
+                          value: game.uid,
+                          child: Text(
+                            '${game.gameName} (${game.quantityInStock})',
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (val) =>
+                        setState(() => _selectedBoardgame = val),
+                  ),
             SizedBox(height: 16),
 
             // Special Requests
