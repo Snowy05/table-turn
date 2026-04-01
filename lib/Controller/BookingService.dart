@@ -39,4 +39,20 @@ class BookingService {
   Future<void> deleteBooking(String bookingId) async {
     await bookingsCollection.doc(bookingId).delete();
   }
+
+    ///mark booking as ended and increment boardgame quantity, function for admin to end booking.
+  Future<void> endBookingAndReturnBoardgame(
+    String bookingId,
+    String boardGameId,
+  ) async {
+    //update booking status to 'ended'
+    await bookingsCollection.doc(bookingId).update({'status': 'ended'});
+    //increment boardgame quantity if valid
+    if (boardGameId.isNotEmpty && boardGameId != 'None') {
+      final gameRef = FirebaseFirestore.instance
+          .collection('boardgames')
+          .doc(boardGameId);
+      await gameRef.update({'quantityInStock': FieldValue.increment(1)});
+    }
+  }
 }

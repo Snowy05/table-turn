@@ -16,6 +16,19 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
+    // Example: End a booking and return the boardgame
+    Future<void> _endBookingAndReturnBoardgame(String bookingId, String boardGameId) async {
+      try {
+        await BookingService().endBookingAndReturnBoardgame(bookingId, boardGameId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Booking ended and boardgame returned!')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to end booking: $e')),
+        );
+      }
+    }
   DateTime? _selectedDate = DateTime.now(); // default to today
   String? _selectedTable = 'table1'; // default to first table
   String? _selectedSlot;
@@ -140,6 +153,13 @@ class _BookingPageState extends State<BookingPage> {
           _selectedTable!,
           slot,
         );
+      }
+      //decrease boardgame quantity if one is selected
+      if (_selectedBoardgame != null && _selectedBoardgame != 'None') {
+        final gameRef = FirebaseFirestore.instance
+            .collection('boardgames')
+            .doc(_selectedBoardgame);
+        await gameRef.update({'quantityInStock': FieldValue.increment(-1)});
       }
       ScaffoldMessenger.of(
         context,
@@ -290,6 +310,58 @@ class _BookingPageState extends State<BookingPage> {
                   ? _submitBooking
                   : null,
               child: Text('Book Now'),
+            ),
+            SizedBox(height: 16),
+            // Example button to end a booking and return boardgame (for demo/admin)
+            ElevatedButton(
+              onPressed: () async {
+                // TODO: Replace with actual bookingId and boardGameId
+                // Example usage: _endBookingAndReturnBoardgame('bookingId', 'boardGameId');
+                // For demo, show a dialog to enter IDs
+                String? bookingId;
+                String? boardGameId;
+                await showDialog(
+                  context: context,
+                  builder: (context) {
+                    final bookingIdController = TextEditingController();
+                    final boardGameIdController = TextEditingController();
+                    return AlertDialog(
+                      title: Text('End Booking & Return Boardgame'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            controller: bookingIdController,
+                            decoration: InputDecoration(labelText: 'Booking ID'),
+                          ),
+                          TextField(
+                            controller: boardGameIdController,
+                            decoration: InputDecoration(labelText: 'Boardgame ID'),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            bookingId = bookingIdController.text;
+                            boardGameId = boardGameIdController.text;
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Submit'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('Cancel'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (bookingId != null && bookingId!.isNotEmpty && boardGameId != null && boardGameId!.isNotEmpty) {
+                  await _endBookingAndReturnBoardgame(bookingId!, boardGameId!);
+                }
+              },
+              child: Text('End Booking & Return Boardgame'),
             ),
           ],
         ),
