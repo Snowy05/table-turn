@@ -105,18 +105,21 @@ class _BookingPageState extends State<BookingPage> {
 }
   // slotpicker modal here
   void _showSlotPicker() async {
-    if (_selectedTable == null || _selectedDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select a date and table first!')),
-      );
-      return;
-    }
-    String? picked = await showModalBottomSheet<String>(
-      context: context,
-      builder: (context) => SlotPickerModal(slots: defaultSlots),
+  if (_selectedTable == null || _selectedDate == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Please select a date and table first!')),
     );
-    if (picked != null) setState(() => _selectedSlot = picked);
+    return;
   }
+  final dateStr = _selectedDate!.toIso8601String().split('T')[0];
+  final availableSlots = await Tableavailabilityservice().getAvailableSlots(dateStr, _selectedTable!);
+
+  String? picked = await showModalBottomSheet<String>(
+    context: context,
+    builder: (context) => SlotPickerModal(slots: availableSlots),
+  );
+  if (picked != null) setState(() => _selectedSlot = picked);
+}
 
   Widget build(BuildContext context) {
     return Scaffold(
