@@ -1,23 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// model for voting each week for the game of the week
 class GowModel {
   final String uid;
   final String gameId;
-  final String gameName;
   final String weekId;
-  final DateTime startDate;
-  final DateTime endDate;
-  final String bannerUrl;
+  final String WeekId;
   final DateTime createdAt;
 
   GowModel({
     required this.uid,
     required this.gameId,
-    required this.gameName,
     required this.weekId,
-    required this.startDate,
-    required this.endDate,
-    required this.bannerUrl,
+    required this.WeekId,
     required this.createdAt,
   });
 
@@ -25,11 +20,8 @@ class GowModel {
     return GowModel(
       uid: documentId,
       gameId: documentId,
-      gameName: data['gameName'] ?? '',
       weekId: data['weekId'] ?? '',
-      startDate: (data['startDate'] as Timestamp).toDate(),
-      endDate: (data['endDate'] as Timestamp).toDate(),
-      bannerUrl: data['bannerUrl'] ?? '',
+      WeekId: data['WeekId'] ?? '',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
@@ -37,11 +29,8 @@ class GowModel {
     return {
       'uid': uid,
 
-      'gameName': gameName,
       'weekId': weekId,
-      'startDate': Timestamp.fromDate(startDate),
-      'endDate': Timestamp.fromDate(endDate),
-      'bannerUrl': bannerUrl,
+      'WeekId': WeekId,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
