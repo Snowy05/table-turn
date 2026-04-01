@@ -20,6 +20,7 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
+  int _currentStep = 0;
   Map<DateTime, double> _fullnessByDay = {};
   bool _loadingFullness = false;
 
@@ -209,180 +210,197 @@ class _BookingPageState extends State<BookingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Booking Page')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Date selection with fullness indicators (0-50% green, 50-100% orange, 100% red)
-              _loadingFullness
-                  ? Center(child: CircularProgressIndicator())
-                  : TableCalendar(
-                      firstDay: DateTime.now(),
-                      lastDay: DateTime.now().add(Duration(days: 14)),
-                      focusedDay: _selectedDate ?? DateTime.now(),
-                      headerStyle: HeaderStyle(
-                        formatButtonVisible: false,
-                        titleCentered: true,
+      // using stepper for slides, DO NOT USE SINGLECHILD SCROLLVIEW, IT BREAKS THE STEPPER
+      // Reduced text to fit all options
+      body: Stepper(
+        type: StepperType.horizontal,
+        currentStep: _currentStep,
+        onStepContinue: () {
+          if (_currentStep < 3) {
+            setState(() => _currentStep++);
+          } else {
+            _submitBooking();
+          }
+        },
+        onStepCancel: () {
+          if (_currentStep > 0) {
+            setState(() => _currentStep--);
+          }
+        },
+        steps: [
+          Step(
+            title: Text('Date'),
+            isActive: _currentStep >= 0,
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _loadingFullness
+                    ? Center(child: CircularProgressIndicator())
+                    : TableCalendar(
+                        firstDay: DateTime.now(),
+                        lastDay: DateTime.now().add(Duration(days: 14)),
+                        focusedDay: _selectedDate ?? DateTime.now(),
+                        headerStyle: HeaderStyle(
+                          formatButtonVisible: false,
+                          titleCentered: true,
+                        ),
+                        calendarFormat: CalendarFormat.twoWeeks,
+                        availableCalendarFormats: const {
+                          CalendarFormat.twoWeeks: 'Two Weeks',
+                        },
+                        onDaySelected: (selectedDay, focusedDay) {
+                          setState(() {
+                            _selectedDate = selectedDay;
+                          });
+                        },
+                        selectedDayPredicate: (day) =>
+                            isSameDay(day, _selectedDate),
+                        calendarBuilders: CalendarBuilders(
+                          defaultBuilder: (context, day, focusedDay) {
+                            final key = DateTime(day.year, day.month, day.day);
+                            final fullness = _fullnessByDay[key] ?? 0.0;
+                            Color bg;
+                            if (fullness >= 0.8) {
+                              bg = Colors.red;
+                            } else if (fullness >= 0.5) {
+                              bg = Colors.orange;
+                            } else {
+                              bg = Colors.green;
+                            }
+                            return Container(
+                              margin: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: bg,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                '${day.day}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                      calendarFormat: CalendarFormat.twoWeeks,
-                      availableCalendarFormats: const {
-                        CalendarFormat.twoWeeks: 'Two Weeks',
-                      },
-                      onDaySelected: (selectedDay, focusedDay) {
-                        setState(() {
-                          _selectedDate = selectedDay;
-                        });
-                      },
-                      selectedDayPredicate: (day) =>
-                          isSameDay(day, _selectedDate),
-                      calendarBuilders: CalendarBuilders(
-                        defaultBuilder: (context, day, focusedDay) { //color code days based on fullness
-                          final key = DateTime(day.year, day.month, day.day);// normalize to date only for lookup
-                          final fullness = _fullnessByDay[key] ?? 0.0;
-                          Color bg;
-                          if (fullness >= 0.8) { // 80% or more booked
-                            bg = Colors.red;
-                          } else if (fullness >= 0.5) { // 50-80% booked
-                            bg = Colors.orange;
-                          } else {
-                            bg = Colors.green; // less than 50% booked
-                          }
-                          return Container(
-                            margin: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: bg,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              '${day.day}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                SizedBox(height: 20),
+                Text('Select Table'),
+                DropdownButton<String>(
+                  value: _selectedTable,
+                  hint: Text('Choose Table'),
+                  items: ['table1', 'table2', 'table3', 'table4', 'table5']
+                      .map(
+                        (table) =>
+                            DropdownMenuItem(value: table, child: Text(table)),
+                      )
+                      .toList(),
+                  onChanged: (val) => setState(() => _selectedTable = val),
+                ),
+                SizedBox(height: 20),
+                Text('Select Time Slot'),
+                ElevatedButton(
+                  onPressed: () {
+                    _showSlotPicker();
+                  },
+                  child: Text(_selectedSlot ?? 'Slot'),
+                ),
+              ],
+            ),
+          ),
+          Step(
+            title: Text('Duration'),
+            isActive: _currentStep >= 1,
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Duration (hours)'),
+                DropdownButton(
+                  value: _duration,
+                  items: [1, 2, 3, 4, 5]
+                      .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
+                      .toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => _duration = val);
+                  },
+                ),
+                SizedBox(height: 10),
+                Text('Number of Guests'),
+                DropdownButton<int>(
+                  value: _guests,
+                  items: List.generate(12, (i) => i + 1)
+                      .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
+                      .toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => _guests = val);
+                  },
+                ),
+              ],
+            ),
+          ),
+          Step(
+            title: Text('Optional'),
+            isActive: _currentStep >= 2,
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Boardgame (optional)'),
+                _loadingBoardgames
+                    ? CircularProgressIndicator()
+                    : DropdownButton<String>(
+                        value: _selectedBoardgame,
+                        hint: Text('Choose Boardgame'),
+                        items: [
+                          DropdownMenuItem(value: 'None', child: Text('None')),
+                          ..._availableBoardgames.map(
+                            (game) => DropdownMenuItem(
+                              value: game.uid,
+                              child: Text(
+                                '${game.gameName} (${game.quantityInStock})',
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-              // SizedBox(height: 20),
-              // Text('Select Date'),
-              // ElevatedButton(
-              //   onPressed: () async {
-              //     DateTime? picked = await showDatePicker(
-              //       context: context,
-              //       initialDate: DateTime.now(),
-              //       firstDate: DateTime.now(),
-              //       lastDate: DateTime.now().add(Duration(days: 365)),
-              //     );
-              //     if (picked != null) setState(() => _selectedDate = picked);
-              //   },
-              //   child: Text(
-              //     _selectedDate == null
-              //         ? 'Choose Date'
-              //         : _selectedDate!.toLocal().toString().split(' ')[0],
-              //   ),
-              // ),
-              
-              
-              SizedBox(height: 20),
-              Text('Select Table'),
-              DropdownButton<String>(
-                value: _selectedTable,
-                hint: Text('Choose Table'),
-                items: ['table1', 'table2', 'table3', 'table4', 'table5']
-                    .map(
-                      (table) =>
-                          DropdownMenuItem(value: table, child: Text(table)),
-                    )
-                    .toList(),
-                onChanged: (val) => setState(() => _selectedTable = val),
-              ),
-              SizedBox(height: 20),
-              Text('Select Time Slot'),
-              ElevatedButton(
-                onPressed: () {
-                  _showSlotPicker();
-                },
-                child: Text(_selectedSlot ?? 'Slot'),
-              ),
-
-              SizedBox(height: 20),
-              // Duration and guests selection
-              Text('Duration (hours)'),
-              DropdownButton(
-                value: _duration,
-                items: [1, 2, 3, 4, 5]
-                    .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
-                    .toList(),
-                onChanged: (val) {
-                  if (val != null) setState(() => _duration = val);
-                },
-              ),
-              SizedBox(height: 10),
-
-              // Number of Guests
-              Text('Number of Guests'),
-              DropdownButton<int>(
-                value: _guests,
-                items: List.generate(12, (i) => i + 1)
-                    .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
-                    .toList(),
-                onChanged: (val) {
-                  if (val != null) setState(() => _guests = val);
-                },
-              ),
-              SizedBox(height: 16),
-
-              // Boardgame (from Firestore, only available for booking and the quantity in stock is greater than 0)
-              Text('Boardgame (optional)'),
-              _loadingBoardgames
-                  ? CircularProgressIndicator()
-                  : DropdownButton<String>(
-                      value: _selectedBoardgame,
-                      hint: Text('Choose Boardgame'),
-                      items: [
-                        DropdownMenuItem(value: 'None', child: Text('None')),
-                        ..._availableBoardgames.map(
-                          (game) => DropdownMenuItem(
-                            value: game.uid,
-                            child: Text(
-                              '${game.gameName} (${game.quantityInStock})',
-                            ),
                           ),
-                        ),
-                      ],
-                      onChanged: (val) =>
-                          setState(() => _selectedBoardgame = val),
-                    ),
-              SizedBox(height: 16),
-
-              // Special Requests
-              Text('Special Requests'),
-              TextField(
-                controller: _specialRequestsController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Any special requests?',
+                        ],
+                        onChanged: (val) =>
+                            setState(() => _selectedBoardgame = val),
+                      ),
+                SizedBox(height: 16),
+                Text('Special Requests'),
+                TextField(
+                  controller: _specialRequestsController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Any special requests?',
+                  ),
+                  maxLines: 2,
                 ),
-                maxLines: 2,
-              ),
-              SizedBox(height: 16),
-
-              ElevatedButton(
-                onPressed:
-                    (_selectedDate != null &&
-                        _selectedTable != null &&
-                        _selectedSlot != null)
-                    ? _submitBooking
-                    : null,
-                child: Text('Book Now'),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          Step(
+            title: Text('Payment'),
+            isActive: _currentStep >= 3,
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Mock Payment Step'),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    // In a real app, integrate payment here
+                    _submitBooking();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Mock payment successful!')),
+
+                    );
+                  },
+                  child: Text('Pay & Book Now'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
