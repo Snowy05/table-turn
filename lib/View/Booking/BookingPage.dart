@@ -9,6 +9,8 @@ import 'package:tableturn_project0/Model/Options/constants.dart'
 import 'package:tableturn_project0/Model/bookingModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tableturn_project0/Model/gameModel.dart';
+import 'package:provider/provider.dart';
+import 'package:tableturn_project0/Model/bookingFormModel.dart';
 import 'package:tableturn_project0/View/Booking/SlotPickerModal.dart';
 import 'package:tableturn_project0/Widgets/BottomNav.dart';
 
@@ -23,18 +25,23 @@ class _BookingPageState extends State<BookingPage> {
   int _currentStep = 0;
   Map<DateTime, double> _fullnessByDay = {};
   bool _loadingFullness = false;
+  List<GameModel> _availableBoardgames = [];
+  bool _loadingBoardgames = false;
+  final TextEditingController _specialRequestsController =
+      TextEditingController();
 
-  Future<void> _fetchFullnessForNextWeek() async {
+  Future<void> _fetchFullnessForNextWeek(BuildContext context) async {
     setState(() {
       _loadingFullness = true;
     });
+    final bookingForm = Provider.of<BookingFormModel>(context, listen: false);
     final Map<DateTime, double> result = {};
     final now = DateTime.now();
     for (int i = 0; i < 7; i++) {
       final day = DateTime(now.year, now.month, now.day + i);
       final dateStr = day.toIso8601String().split('T')[0];
       final availableSlots = await table_availability.Tableavailabilityservice()
-          .getAvailableSlots(dateStr, _selectedTable ?? 'table1');
+          .getAvailableSlots(dateStr, bookingForm.selectedTable ?? 'table1');
       final booked =
           options_constants.defaultSlots.length - availableSlots.length;
       final fullness = booked / options_constants.defaultSlots.length;
@@ -50,20 +57,19 @@ class _BookingPageState extends State<BookingPage> {
   void initState() {
     super.initState();
     _fetchAvailableBoardgames();
-    _fetchFullnessForNextWeek();
+    // Fullness fetch moved to didChangeDependencies to ensure Provider is available
   }
 
-  DateTime? _selectedDate = DateTime.now(); // default to today
-  String? _selectedTable = 'table1'; // default to first table
-  String? _selectedSlot;
-  int _duration = 1; // default duration in hours
-  int _guests = 1; // default number of guests
-  String? _selectedBoardgame =
-      'None'; // for game selection, if needed, as of now selected none
-  final TextEditingController _specialRequestsController =
-      TextEditingController();
-  List<GameModel> _availableBoardgames = [];
-  bool _loadingBoardgames = false;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchFullnessForNextWeek(context);
+    final bookingForm = Provider.of<BookingFormModel>(context, listen: false);
+    _specialRequestsController.text = bookingForm.specialRequests;
+    _specialRequestsController.addListener(() {
+      bookingForm.setSpecialRequests(_specialRequestsController.text);
+    });
+  }
 
   // Fetch available boardgames from Firestore
   Future<void> _fetchAvailableBoardgames() async {
@@ -88,26 +94,24 @@ class _BookingPageState extends State<BookingPage> {
     final slotTimes = options_constants.defaultSlots;
     final startIdx = slotTimes.indexOf(startSlot);
     if (startIdx == -1) return [];
-    //collect slots for the duration (e.g., 10:00, 12:00, 14:00 for 3 hours)
     return slotTimes.skip(startIdx).take(duration).toList();
   }
 
-  Future<void> _submitBooking() async {
-    if (_selectedDate == null ||
-        _selectedTable == null ||
-        _selectedSlot == null)
+  Future<void> _submitBooking(BuildContext context) async {
+    final bookingForm = Provider.of<BookingFormModel>(context, listen: false);
+    if (bookingForm.selectedDate == null ||
+        bookingForm.selectedTable == null ||
+        bookingForm.selectedSlot == null)
       return;
 
-    final dateStr = _selectedDate!.toIso8601String().split(
-      'T',
-    )[0]; //rT is used to split date and time, we only need the date part for fetching availability
+    final dateStr = bookingForm.selectedDate!.toIso8601String().split('T')[0];
     final availableSlots = await table_availability.Tableavailabilityservice()
-        .getAvailableSlots(dateStr, _selectedTable!);
+        .getAvailableSlots(dateStr, bookingForm.selectedTable!);
 
-    //get all slots needed for the booking duration
-    final slotsNeeded = getSlotsForDuration(_selectedSlot!, _duration);
-
-    //gcheck if all slots are available
+    final slotsNeeded = getSlotsForDuration(
+      bookingForm.selectedSlot!,
+      bookingForm.duration,
+    );
     final allAvailable = slotsNeeded.every(
       (slot) => availableSlots.contains(slot),
     );
@@ -122,23 +126,21 @@ class _BookingPageState extends State<BookingPage> {
       return;
     }
 
-    //Check slot availability before booking
-    if (!availableSlots.contains(_selectedSlot)) {
+    if (!availableSlots.contains(bookingForm.selectedSlot)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sorry, this slot is no longer available.')),
       );
       return;
     }
 
-    // Build booking start/end time
     final bookingStart = DateTime(
-      _selectedDate!.year,
-      _selectedDate!.month,
-      _selectedDate!.day,
-      int.parse(_selectedSlot!.split(':')[0]),
-      int.parse(_selectedSlot!.split(':')[1]),
+      bookingForm.selectedDate!.year,
+      bookingForm.selectedDate!.month,
+      bookingForm.selectedDate!.day,
+      int.parse(bookingForm.selectedSlot!.split(':')[0]),
+      int.parse(bookingForm.selectedSlot!.split(':')[1]),
     );
-    final bookingEnd = bookingStart.add(Duration(hours: _duration));
+    final bookingEnd = bookingStart.add(Duration(hours: bookingForm.duration));
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -150,37 +152,40 @@ class _BookingPageState extends State<BookingPage> {
     final booking = BookingModel(
       uid: '',
       userId: user.uid,
-      tableId: _selectedTable!,
-      boardGameId: _selectedBoardgame ?? '',
+      tableId: bookingForm.selectedTable!,
+      boardGameId: bookingForm.selectedBoardgame ?? '',
       bookingStartTime: bookingStart,
       bookingEndTime: bookingEnd,
-      numberOfPeople: _guests,
-      specialRequests: _specialRequestsController.text,
+      numberOfPeople: bookingForm.guests,
+      specialRequests: bookingForm.specialRequests,
       status: 'pending',
       createdAt: DateTime.now(),
     );
 
     try {
       await BookingService().createBooking(booking);
-      // Remove all slots covered by the booking
       for (final slot in slotsNeeded) {
         await table_availability.Tableavailabilityservice().bookSlot(
           dateStr,
-          _selectedTable!,
+          bookingForm.selectedTable!,
           slot,
         );
       }
-      //ecrease boardgame quantity if one is selected
-      if (_selectedBoardgame != null && _selectedBoardgame != 'None') {
+      if (bookingForm.selectedBoardgame != null &&
+          bookingForm.selectedBoardgame != 'None') {
         final gameRef = FirebaseFirestore.instance
             .collection('boardgames')
-            .doc(_selectedBoardgame);
+            .doc(bookingForm.selectedBoardgame);
         await gameRef.update({'quantityInStock': FieldValue.increment(-1)});
       }
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Booking successful!')));
-      // Optionally reset form or navigate away
+      await bookingForm.clear();
+      _specialRequestsController.clear();
+      setState(() {
+        _currentStep = 0;
+      });
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -189,38 +194,37 @@ class _BookingPageState extends State<BookingPage> {
   }
 
   // slotpicker modal here
-  void _showSlotPicker() async {
-    if (_selectedTable == null || _selectedDate == null) {
+  void _showSlotPicker(BuildContext context) async {
+    final bookingForm = Provider.of<BookingFormModel>(context, listen: false);
+    if (bookingForm.selectedTable == null || bookingForm.selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please select a date and table first!')),
       );
       return;
     }
-    final dateStr = _selectedDate!.toIso8601String().split('T')[0];
+    final dateStr = bookingForm.selectedDate!.toIso8601String().split('T')[0];
     final availableSlots = await table_availability.Tableavailabilityservice()
-        .getAvailableSlots(dateStr, _selectedTable!);
+        .getAvailableSlots(dateStr, bookingForm.selectedTable!);
 
     String? picked = await showModalBottomSheet<String>(
       context: context,
       builder: (context) => SlotPickerModal(slots: availableSlots),
     );
-    if (picked != null) setState(() => _selectedSlot = picked);
+    if (picked != null) bookingForm.setSelectedSlot(picked);
   }
 
   Widget build(BuildContext context) {
+    final bookingForm = Provider.of<BookingFormModel>(context);
     return Scaffold(
       appBar: AppBar(title: Text('Booking Page')),
-      // using stepper for slides, DO NOT USE SINGLECHILD SCROLLVIEW, IT BREAKS THE STEPPER
-      // Reduced text to fit all options
       body: Stepper(
         type: StepperType.horizontal,
         currentStep: _currentStep,
-        // Continue button moves to next step or submits booking on last stepfl
         onStepContinue: () {
           if (_currentStep < 3) {
             setState(() => _currentStep++);
           } else {
-            _submitBooking();
+            _submitBooking(context);
           }
         },
         onStepCancel: () {
@@ -240,7 +244,7 @@ class _BookingPageState extends State<BookingPage> {
                     : TableCalendar(
                         firstDay: DateTime.now(),
                         lastDay: DateTime.now().add(Duration(days: 14)),
-                        focusedDay: _selectedDate ?? DateTime.now(),
+                        focusedDay: bookingForm.selectedDate ?? DateTime.now(),
                         headerStyle: HeaderStyle(
                           formatButtonVisible: false,
                           titleCentered: true,
@@ -250,12 +254,10 @@ class _BookingPageState extends State<BookingPage> {
                           CalendarFormat.twoWeeks: 'Two Weeks',
                         },
                         onDaySelected: (selectedDay, focusedDay) {
-                          setState(() {
-                            _selectedDate = selectedDay;
-                          });
+                          bookingForm.setSelectedDate(selectedDay);
                         },
                         selectedDayPredicate: (day) =>
-                            isSameDay(day, _selectedDate),
+                            isSameDay(day, bookingForm.selectedDate),
                         calendarBuilders: CalendarBuilders(
                           defaultBuilder: (context, day, focusedDay) {
                             final key = DateTime(day.year, day.month, day.day);
@@ -289,7 +291,7 @@ class _BookingPageState extends State<BookingPage> {
                 SizedBox(height: 20),
                 Text('Select Table'),
                 DropdownButton<String>(
-                  value: _selectedTable,
+                  value: bookingForm.selectedTable,
                   hint: Text('Choose Table'),
                   items: ['table1', 'table2', 'table3', 'table4', 'table5']
                       .map(
@@ -297,15 +299,15 @@ class _BookingPageState extends State<BookingPage> {
                             DropdownMenuItem(value: table, child: Text(table)),
                       )
                       .toList(),
-                  onChanged: (val) => setState(() => _selectedTable = val),
+                  onChanged: (val) => bookingForm.setSelectedTable(val),
                 ),
                 SizedBox(height: 20),
                 Text('Select Time Slot'),
                 ElevatedButton(
                   onPressed: () {
-                    _showSlotPicker();
+                    _showSlotPicker(context);
                   },
-                  child: Text(_selectedSlot ?? 'Slot'),
+                  child: Text(bookingForm.selectedSlot ?? 'Slot'),
                 ),
               ],
             ),
@@ -317,24 +319,24 @@ class _BookingPageState extends State<BookingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Duration (hours)'),
-                DropdownButton(
-                  value: _duration,
+                DropdownButton<int>(
+                  value: bookingForm.duration,
                   items: [1, 2, 3, 4, 5]
                       .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
                       .toList(),
                   onChanged: (val) {
-                    if (val != null) setState(() => _duration = val);
+                    if (val != null) bookingForm.setDuration(val);
                   },
                 ),
                 SizedBox(height: 10),
                 Text('Number of Guests'),
                 DropdownButton<int>(
-                  value: _guests,
+                  value: bookingForm.guests,
                   items: List.generate(12, (i) => i + 1)
                       .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
                       .toList(),
                   onChanged: (val) {
-                    if (val != null) setState(() => _guests = val);
+                    if (val != null) bookingForm.setGuests(val);
                   },
                 ),
               ],
@@ -350,7 +352,7 @@ class _BookingPageState extends State<BookingPage> {
                 _loadingBoardgames
                     ? CircularProgressIndicator()
                     : DropdownButton<String>(
-                        value: _selectedBoardgame,
+                        value: bookingForm.selectedBoardgame ?? 'None',
                         hint: Text('Choose Boardgame'),
                         items: [
                           DropdownMenuItem(value: 'None', child: Text('None')),
@@ -364,7 +366,7 @@ class _BookingPageState extends State<BookingPage> {
                           ),
                         ],
                         onChanged: (val) =>
-                            setState(() => _selectedBoardgame = val),
+                            bookingForm.setSelectedBoardgame(val),
                       ),
                 SizedBox(height: 16),
                 Text('Special Requests'),
@@ -389,11 +391,9 @@ class _BookingPageState extends State<BookingPage> {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    // In a real app, integrate payment here
-                    _submitBooking();
+                    _submitBooking(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Mock payment successful!')),
-
                     );
                   },
                   child: Text('Pay & Book Now'),

@@ -8,6 +8,8 @@ import 'package:tableturn_project0/View/Menu/MenuView.dart';
 import 'package:tableturn_project0/View/ProfileView.dart';
 
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
+import 'Model/bookingFormModel.dart';
 // Importing the views and controller
 import 'View/SignUp.dart';
 import 'View/Login.dart';
@@ -16,7 +18,12 @@ import 'View/Dashboard.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => BookingFormModel()..load(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
