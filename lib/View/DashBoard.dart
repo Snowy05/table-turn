@@ -65,6 +65,20 @@ class DashboardPage extends StatelessWidget {
                   Navigator.pushNamed(context, '/menu');
                 },
               ),
+              WidgetMenubttn(
+                label: 'Vote for Game of the Week',
+                imageAsset: 'assets/images/vote_gow.png',
+                onTap: () {
+                  Navigator.pushNamed(context, '/gow');
+                },
+              ),
+              WidgetMenubttn(
+                  label: 'View Game of the Week',
+                  imageAsset: 'assets/images/gow_results.png',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/gowresults');
+                  },
+                ),
 
             ],
           ),

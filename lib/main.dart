@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGame.dart';
 import 'package:tableturn_project0/View/Booking/BookingPage.dart';
+import 'package:tableturn_project0/View/GOW/GOWPage.dart';
+import 'package:tableturn_project0/View/GOW/GOWVotingPage.dart';
 import 'package:tableturn_project0/View/Menu/MenuView.dart';
 import 'package:tableturn_project0/View/ProfileView.dart';
 
@@ -52,6 +54,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfileView(),
         '/bookings': (context) => BookingPage(),
         '/menu': (context) => MenuView(),
+        '/gow': (context) => GOWVotingPage(),
+        '/gowresults': (context) => GOWPage(),
       },
     );
   }

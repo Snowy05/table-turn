@@ -215,6 +215,7 @@ class _BookingPageState extends State<BookingPage> {
       body: Stepper(
         type: StepperType.horizontal,
         currentStep: _currentStep,
+        // Continue button moves to next step or submits booking on last stepfl
         onStepContinue: () {
           if (_currentStep < 3) {
             setState(() => _currentStep++);
@@ -229,7 +230,7 @@ class _BookingPageState extends State<BookingPage> {
         },
         steps: [
           Step(
-            title: Text('Date'),
+            title: Text(''),
             isActive: _currentStep >= 0,
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,7 +311,7 @@ class _BookingPageState extends State<BookingPage> {
             ),
           ),
           Step(
-            title: Text('Duration'),
+            title: Text(''),
             isActive: _currentStep >= 1,
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,7 +341,7 @@ class _BookingPageState extends State<BookingPage> {
             ),
           ),
           Step(
-            title: Text('Optional'),
+            title: Text(''),
             isActive: _currentStep >= 2,
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,7 +380,7 @@ class _BookingPageState extends State<BookingPage> {
             ),
           ),
           Step(
-            title: Text('Payment'),
+            title: Text(''),
             isActive: _currentStep >= 3,
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

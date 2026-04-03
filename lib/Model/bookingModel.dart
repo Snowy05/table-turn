@@ -32,6 +32,7 @@ class BookingModel {
        ),
        assert(numberOfPeople > 0, 'numberOfPeople must be greater than 0'),
        assert(
+        // for future, right now we wont use the status field 
          status == 'pending' || status == 'confirmed' || status == 'cancelled',
          'status must be one of: pending, confirmed, cancelled',
        );

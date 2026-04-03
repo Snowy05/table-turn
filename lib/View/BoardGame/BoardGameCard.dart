@@ -26,6 +26,8 @@ class BoardGameCard extends StatelessWidget {
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.videogame_asset, size: 48),
                 ),
               )
             else if (game.imageUrl.isNotEmpty)
@@ -36,6 +38,8 @@ class BoardGameCard extends StatelessWidget {
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.videogame_asset, size: 48),
                 ),
               )
             else
