@@ -19,7 +19,7 @@ class _GOWPageState extends State<GOWPage> {
     final now = DateTime.now();
     //use ISO week number for week-based GOW
     final firstDayOfYear = DateTime(now.year, 1, 1);
-    final daysOffset = firstDayOfYear.weekday - DateTime.monday;
+    final daysOffset = firstDayOfYear.weekday - DateTime.monday; // Calculate offset to the first Monday of the year because ISO weeks start on Monday
     final firstMonday = firstDayOfYear.subtract(Duration(days: daysOffset));
     final diff = now.difference(firstMonday).inDays;
     //floor division to get week number, add 1 because first week is W01
@@ -27,7 +27,7 @@ class _GOWPageState extends State<GOWPage> {
     //format: 2026-W14 for year 2026, week 14
     return '${now.year}-W${weekNumber.toString().padLeft(2, '0')}';
   }
-
+// this
 
   Future<Map<String, dynamic>?> _fetchWinnerWithVotes() async {
     final weekId = getCurrentWeekId();

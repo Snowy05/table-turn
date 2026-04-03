@@ -158,22 +158,7 @@ class _BoardGameState extends State<BoardGame> {
           ),
         ],
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 1,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/bookings');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/dashboard');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-          }
-        },
-      ),
+      
     );
   }
 }

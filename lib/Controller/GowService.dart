@@ -44,14 +44,15 @@ class GowService {
     final votes = <String, int>{};
     for (var doc in snapshot.docs) {
       final gameId = doc['gameId'] as String;
-      votes[gameId] = (votes[gameId] ?? 0) + 1;
+      votes[gameId] = (votes[gameId] ?? 0) + 1; //if gameId is null, skip it
     }
     if (votes.isEmpty) return null;
-    votes.removeWhere((key, value) => key == null);
+    votes.removeWhere((key, value) => key == null); // Remove null keys if any to prevent errors
     return votes.entries.reduce((a, b) => a.value >= b.value ? a : b).key;
   }
 
   //save the Game of the Week winner
+  
   Future<void> setGameOfTheWeek({
     required String gameId,
     required String weekId,
@@ -63,7 +64,6 @@ class GowService {
         'weekId': weekId,
         'createdAt': FieldValue.serverTimestamp(),
       });
-      // Debug output
       print('GOW document created: weekId=$weekId, gameId=$gameId');
     } catch (e) {
       print('Failed to create GOW document: $e');

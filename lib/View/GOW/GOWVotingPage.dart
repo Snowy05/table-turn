@@ -15,6 +15,7 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
   late Future<List<GameModel>> _gamesFuture;
   bool _hasVoted = false;
   String? _selectedGameId;
+  GameModel? _votedGame;
   bool _loading = false;
   String? _voteMessage;
 
@@ -42,10 +43,41 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
 
   Future<void> _checkIfVoted() async {
     final weekId = getCurrentWeekId();
-    final voted = await GowService().hasVotedThisWeek(weekId);
-    setState(() {
-      _hasVoted = voted;
-    });
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      setState(() {
+        _hasVoted = false;
+        _votedGame = null;
+      });
+      return;
+    }
+    final voteDoc = await FirebaseFirestore.instance
+        .collection('votes')
+        .doc('${user.uid}_$weekId')
+        .get();
+    if (voteDoc.exists) {
+      final gameId = voteDoc['gameId'] as String?;
+      if (gameId != null) {
+        final games = await _gamesFuture;
+        final votedGame = games.where((g) => g.uid == gameId).isNotEmpty
+            ? games.firstWhere((g) => g.uid == gameId)
+            : null;
+        setState(() {
+          _hasVoted = true;
+          _votedGame = votedGame;
+        });
+      } else {
+        setState(() {
+          _hasVoted = true;
+          _votedGame = null;
+        });
+      }
+    } else {
+      setState(() {
+        _hasVoted = false;
+        _votedGame = null;
+      });
+    }
   }
 
   Future<void> _vote() async {
@@ -57,9 +89,16 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
     final weekId = getCurrentWeekId();
     try {
       await GowService().voteForGame(gameId: _selectedGameId!, weekId: weekId);
+      // find the voted game from the loaded games (safe nullable logic)
+      final games = await _gamesFuture;
+      final votedGame = games.where((g) => g.uid == _selectedGameId).isNotEmpty
+          ? games.firstWhere((g) => g.uid == _selectedGameId)
+          : null;
       setState(() {
         _hasVoted = true;
         _voteMessage = 'Vote submitted!';
+        _votedGame = votedGame;
+        _selectedGameId = null; // Prevent further voting in this session
       });
     } catch (e) {
       setState(() {
@@ -86,6 +125,62 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
             return const Center(child: Text('No games available for voting.'));
           }
           final games = snapshot.data!;
+          if (_hasVoted && _votedGame != null) {
+            // Show the voted game in the center with a message
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Card(
+                    elevation: 6,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Container(
+                      width: 260,
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_votedGame!.imageUrl.isNotEmpty)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                _votedGame!.imageUrl,
+                                height: 100,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.videogame_asset, size: 48),
+                              ),
+                            ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _votedGame!.gameName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Fingers crossed yours will be the winner',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.brown,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          }
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -107,39 +202,95 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
                       style: const TextStyle(color: Colors.blue),
                     ),
                   ),
-                if (!_hasVoted) ...[
-                  const Text('Select a game to vote for:'),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: games.length,
-                      itemBuilder: (context, index) {
-                        final game = games[index];
-                        return RadioListTile<String>(
-                          title: Text(game.gameName),
-                          value: game.uid,
-                          groupValue: _selectedGameId,
-                          onChanged: (val) {
+                const Text('Select a game to vote for:'),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.8,
+                        ),
+                    itemCount: games.length,
+                    itemBuilder: (context, index) {
+                      final game = games[index];
+                      final isSelected = _selectedGameId == game.uid;
+                      return Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(
+                            color: isSelected
+                                ? Colors.brown
+                                : Colors.transparent,
+                            width: 2,
+                          ),
+                        ),
+                        child: InkWell(
+                          onTap: () {
                             setState(() {
-                              _selectedGameId = val;
+                              _selectedGameId = game.uid;
                             });
                           },
-                        );
-                      },
-                    ),
+                          borderRadius: BorderRadius.circular(16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (game.imageUrl.isNotEmpty)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      game.imageUrl,
+                                      height: 80,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              const Icon(
+                                                Icons.videogame_asset,
+                                                size: 48,
+                                              ),
+                                    ),
+                                  ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  game.gameName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 8),
+                                if (isSelected)
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.brown,
+                                    size: 28,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 12),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _loading || _selectedGameId == null
-                          ? null
-                          : _vote,
-                      child: _loading
-                          ? const CircularProgressIndicator()
-                          : const Text('Vote'),
-                    ),
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _loading || _selectedGameId == null
+                        ? null
+                        : _vote,
+                    child: _loading
+                        ? const CircularProgressIndicator()
+                        : const Text('Vote'),
                   ),
-                ],
+                ),
               ],
             ),
           );
