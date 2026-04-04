@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/AuthService.dart';
 import 'package:tableturn_project0/Controller/GameService.dart';
 import 'package:tableturn_project0/Model/gameModel.dart';
-import 'package:tableturn_project0/Widgets/LoginButton.dart';
+import 'package:tableturn_project0/GlobalWidgets/LoginButton.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

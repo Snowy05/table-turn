@@ -12,7 +12,7 @@ import 'package:tableturn_project0/Model/gameModel.dart';
 import 'package:provider/provider.dart';
 import 'package:tableturn_project0/Model/bookingFormModel.dart';
 import 'package:tableturn_project0/View/Booking/SlotPickerModal.dart';
-import 'package:tableturn_project0/Widgets/BottomNav.dart';
+import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
@@ -408,13 +408,15 @@ class _BookingPageState extends State<BookingPage> {
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.pushReplacementNamed(context, '/bookings');
               break;
             case 1:
               Navigator.pushReplacementNamed(context, '/dashboard');
               break;
             case 2:
               Navigator.pushReplacementNamed(context, '/profile');
+              break;
+              case 3:
+              Navigator.pushReplacementNamed(context, '/loyalty');
               break;
           }
         },

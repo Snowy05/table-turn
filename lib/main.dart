@@ -6,11 +6,9 @@ import 'package:tableturn_project0/View/GOW/GOWPage.dart';
 import 'package:tableturn_project0/View/GOW/GOWVotingPage.dart';
 import 'package:tableturn_project0/View/Menu/MenuView.dart';
 import 'package:tableturn_project0/View/ProfileView.dart';
-
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'Model/bookingFormModel.dart';
-// Importing the views and controller
 import 'View/SignUp.dart';
 import 'View/Login.dart';
 import 'View/Dashboard.dart';
@@ -42,6 +40,15 @@ class MyApp extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(color: Colors.black, width: 2),
       ),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
+      selectedItemColor: primaryColor,
+      unselectedItemColor: Colors.brown[300],
+      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+      unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
     ),
   );
 

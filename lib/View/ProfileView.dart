@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:flutter/material.dart';
-import 'package:tableturn_project0/Widgets/BottomNav.dart';
+import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 import 'package:tableturn_project0/Model/userModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
@@ -327,7 +327,10 @@ class _ProfileViewState extends State<ProfileView> {
                   Navigator.pushReplacementNamed(context, '/dashboard');
                   break;
                 case 2:
-                  Navigator.pushReplacementNamed(context, '/profile');
+                
+                  break;
+                case 3:
+                  Navigator.pushReplacementNamed(context, '/loyalty');
                   break;
               }
             },

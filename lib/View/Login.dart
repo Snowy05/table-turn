@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/AuthService.dart';
-import 'package:tableturn_project0/Widgets/LoginButton.dart';
+import 'package:tableturn_project0/GlobalWidgets/LoginButton.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

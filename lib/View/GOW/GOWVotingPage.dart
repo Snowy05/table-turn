@@ -168,6 +168,9 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
+                  //                                                                                           //
+                  //Add randomised messages to make it more fun and engaging, instead of just "Vote submitted!"//
+                  //                                                                                           //               
                   const Text(
                     'Fingers crossed yours will be the winner',
                     style: TextStyle(
@@ -186,14 +189,14 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_hasVoted)
-                  const Text(
-                    'You have already voted this week.',
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                // if (_hasVoted)
+                //   const Text(
+                //     'You have already voted this week.',
+                //     style: TextStyle(
+                //       color: Colors.green,
+                //       fontWeight: FontWeight.bold,
+                //     ),
+                //   ),
                 if (_voteMessage != null)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),

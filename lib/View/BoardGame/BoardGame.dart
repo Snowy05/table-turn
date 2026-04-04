@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/Model/Options/gameOptions.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGameCardOpen.dart';
-import 'package:tableturn_project0/Widgets/BottomNav.dart';
+import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 import '../../Model/gameModel.dart';
 import '../../Controller/GameService.dart';
 import 'BoardGameCard.dart';

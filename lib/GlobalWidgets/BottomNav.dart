@@ -11,16 +11,18 @@ class CustomBottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
+      type: BottomNavigationBarType.fixed,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Bookings'), 
-        BottomNavigationBarItem (
-          icon: CircleAvatar(
-            radius: 16,
-          backgroundImage: AssetImage('assets/images/logo.png'),
-          ),
-          label: 'Home',      
+        BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Bookings'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
         ),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.card_giftcard),
+          label: 'Loyalty Card',
+        ),
       ],
     );
   }

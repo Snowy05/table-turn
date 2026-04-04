@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tableturn_project0/Widgets/BottomNav.dart';
-import 'package:tableturn_project0/Widgets/WidgetMenuBttn.dart';
+import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
+import 'package:tableturn_project0/GlobalWidgets/WidgetMenuBttn.dart';
 import 'package:tableturn_project0/Model/userModel.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -99,6 +99,9 @@ class DashboardPage extends StatelessWidget {
               break;
             case 2:
               Navigator.pushReplacementNamed(context, '/profile');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/loyalty');
               break;
           }
         },
