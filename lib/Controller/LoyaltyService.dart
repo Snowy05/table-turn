@@ -2,6 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoyaltyService {
+  //stream the full user document for real-time updates (name, points, etc)
+  Stream<Map<String, dynamic>?> userStream() {
+    final user = _auth.currentUser;
+    if (user == null) return const Stream.empty();
+    final userRef = _firestore.collection('users').doc(user.uid);
+    return userRef.snapshots().map((snap) => snap.data());
+  }
+
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
 
@@ -36,8 +44,6 @@ class LoyaltyService {
       }
       transaction.update(userRef, {'loyaltyPoints': currentPoints - points});
     });
-
-    
   }
 
   //set points directly (admin or reset and testing purposes)
@@ -65,30 +71,5 @@ class LoyaltyService {
     return userRef.snapshots().map(
       (snap) => (snap['loyaltyPoints'] ?? 0) as int,
     );
-  }
-
-  // Calculate level based on points (Could include it under the name )
-  int getLevel(int points) {
-    if (points > 2000) return 6; // Platinum
-    if (points >= 2000) return 5; // Gold
-    if (points >= 1000) return 4; // Gold
-    if (points >= 1000) return 3; // Gold
-    if (points >= 500) return 2; // Silver
-    if (points >= 100) return 1; // Bronze
-    return 0; // Newbie
-  }
-
-  // Example: Get level name
-  String getLevelName(int level) {
-    switch (level) {
-      case 3:
-        return 'Gold';
-      case 2:
-        return 'Silver';
-      case 1:
-        return 'Bronze';
-      default:
-        return 'Newbie';
-    }
   }
 }
