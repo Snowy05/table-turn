@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 import 'BankCardUser.dart';
 import 'RewardWidget.dart';
+import 'MyRewardWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../Controller/LoyaltyService.dart';
 import '../../Controller/ShopItemsService.dart';
@@ -101,13 +102,16 @@ class LoyaltyPage extends StatelessWidget {
                                                 await loyaltyService.takePoints(
                                                   item.price,
                                                 );
+                                                //could simplify this method later on
+                                                await loyaltyService
+                                                    .addRewardToUser(item.id);
                                                 if (context.mounted) {
                                                   ScaffoldMessenger.of(
                                                     context,
                                                   ).showSnackBar(
                                                     SnackBar(
                                                       content: Text(
-                                                        'Purchace Successful!',
+                                                        'Purchase Successful!',
                                                       ),
                                                     ),
                                                   );
@@ -136,12 +140,77 @@ class LoyaltyPage extends StatelessWidget {
                           const SizedBox(height: 24),
                         ],
                       ),
-                      // --- My Rewards Slide ---
-                      Center(
-                        child: Text(
-                          'My Rewards (coming soon)',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
+                      // --- My Rewards Slide --- 
+                      Builder(
+                        builder: (context) {
+                          final List<String> rewardIds = List<String>.from(
+                            data['rewards'] ?? [],
+                          );
+                          if (rewardIds.isEmpty) {
+                            return const Center(
+                              child: Text(
+                                'You have not purchased any rewards yet.',
+                              ),
+                            );
+                          }
+                          return StreamBuilder<List<ShopItem>>(
+                            stream: shopItemsService.shopItemsStream(),
+                            builder: (context, shopSnapshot) {
+                              if (shopSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              final allItems = shopSnapshot.data ?? [];
+                              final myItems = allItems
+                                  .where((item) => rewardIds.contains(item.id))
+                                  .toList();
+                              if (myItems.isEmpty) {
+                                return const Center(
+                                  child: Text('No matching rewards found.'),
+                                );
+                              }
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      mainAxisSpacing: 12,
+                                      crossAxisSpacing: 12,
+                                      childAspectRatio: 1,
+                                    ),
+                                itemCount: myItems.length,
+                                itemBuilder: (context, index) {
+                                  final item = myItems[index];
+                                  return MyRewardWidget(
+                                    item: item,
+                                    onOpen: () {
+                                      // implement open logic 
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text('Open Reward'),
+                                          content: Text(
+                                            'You opened ${item.name}! (QR code or details go here)',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Text('Close'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
                       ),
                     ],
                   );
@@ -165,25 +234,24 @@ class LoyaltyPage extends StatelessWidget {
         //   tooltip: 'Add sample reward',
         // ),
         bottomNavigationBar: CustomBottomNavBar(
-        currentIndex:
-            3, 
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/bookings');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/dashboard');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-            case 3:
-              // Already on loyalty page, do nothing
-              break;
-          }
-        },
-      ),
+          currentIndex: 3,
+          onTap: (index) {
+            switch (index) {
+              case 0:
+                Navigator.pushReplacementNamed(context, '/bookings');
+                break;
+              case 1:
+                Navigator.pushReplacementNamed(context, '/dashboard');
+                break;
+              case 2:
+                Navigator.pushReplacementNamed(context, '/profile');
+                break;
+              case 3:
+                // Already on loyalty page, do nothing
+                break;
+            }
+          },
+        ),
       ),
     );
   }

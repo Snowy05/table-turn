@@ -10,6 +10,7 @@ class AppUser {
   final int loyaltyPoints;
   final DateTime createdAt;
   final String? profilePicUrl;
+  final List<String> rewards;
 
   AppUser({
     required this.uid,
@@ -21,6 +22,7 @@ class AppUser {
     required this.loyaltyPoints,
     required this.createdAt,
     this.profilePicUrl,
+    this.rewards = const [],
   });
 
   //constructor to create user from firestore document
@@ -36,6 +38,7 @@ class AppUser {
       loyaltyPoints: data['loyaltyPoints'] ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       profilePicUrl: data['profilePicUrl'],
+      rewards: List<String>.from(data['rewards'] ?? []),
     );
   }
   //converting user from firestore data
@@ -49,6 +52,7 @@ class AppUser {
       'loyaltyPoints': loyaltyPoints,
       'createdAt': createdAt,
       if (profilePicUrl != null) 'profilePicUrl': profilePicUrl,
+      'rewards': rewards,
     };
   }
 }

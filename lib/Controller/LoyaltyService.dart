@@ -2,6 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoyaltyService {
+  //add   a reward to the current users rewards list
+  Future<void> addRewardToUser(String rewardId) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    final userRef = _firestore.collection('users').doc(user.uid);
+    await userRef.update({
+      'rewards': FieldValue.arrayUnion([rewardId]),
+    });
+  }
+
   //stream the full user document for real-time updates (name, points, etc)
   Stream<Map<String, dynamic>?> userStream() {
     final user = _auth.currentUser;
