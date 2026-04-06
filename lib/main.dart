@@ -5,6 +5,7 @@ import 'package:tableturn_project0/View/Booking/BookingPage.dart';
 import 'package:tableturn_project0/View/GOW/GOWPage.dart';
 import 'package:tableturn_project0/View/GOW/GOWVotingPage.dart';
 import 'package:tableturn_project0/View/LoyaltyScheme/LoyaltyPage.dart';
+import 'package:tableturn_project0/View/LoyaltyScheme/QrCodeGenerator.dart';
 import 'package:tableturn_project0/View/Menu/MenuView.dart';
 import 'package:tableturn_project0/View/ProfileView.dart';
 import 'firebase_options.dart';
@@ -72,6 +73,7 @@ class MyApp extends StatelessWidget {
         '/gow': (context) => GOWVotingPage(),
         '/gowresults': (context) => GOWPage(),
         '/loyalty': (context) => LoyaltyPage(),
+        '/qr': (context) => QrCodeGenerator(),
       },
     );
   }

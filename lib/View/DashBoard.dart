@@ -79,6 +79,13 @@ class DashboardPage extends StatelessWidget {
                     Navigator.pushNamed(context, '/gowresults');
                   },
                 ),
+                WidgetMenubttn(
+                  label: 'qr code',
+                  imageAsset: 'assets/images/loyalty.png',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/qr');
+                  },
+                ),
 
             ],
           ),

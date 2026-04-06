@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
+import 'package:tableturn_project0/View/LoyaltyScheme/QRScannerPage.dart';
 import 'BankCardUser.dart';
 import 'RewardWidget.dart';
 import 'MyRewardWidget.dart';
@@ -18,7 +19,7 @@ class LoyaltyPage extends StatelessWidget {
     final loyaltyService = LoyaltyService();
     final shopItemsService = ShopItemsService();
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Loyalty Scheme'),
@@ -26,6 +27,7 @@ class LoyaltyPage extends StatelessWidget {
             tabs: [
               Tab(text: 'Shop'),
               Tab(text: 'My Rewards'),
+              Tab(text: 'Scan QR'),
             ],
           ),
         ),
@@ -141,7 +143,7 @@ class LoyaltyPage extends StatelessWidget {
                           const SizedBox(height: 24),
                         ],
                       ),
-                      // --- My Rewards Slide --- 
+                      // --- My Rewards Slide ---
                       Builder(
                         builder: (context) {
                           final List<String> rewardIds = List<String>.from(
@@ -190,13 +192,24 @@ class LoyaltyPage extends StatelessWidget {
                                     onOpen: () {
                                       showDialog(
                                         context: context,
-                                        builder: (context) => OpenRewardCard(item: item),
+                                        builder: (context) =>
+                                            OpenRewardCard(item: item),
                                       );
                                     },
                                   );
                                 },
                               );
                             },
+                          );
+                        },
+                      ),
+                      // --- Scan QR Slide ---
+                      Builder(
+                        builder: (context) {
+                          return Navigator(
+                            onGenerateRoute: (settings) => MaterialPageRoute(
+                              builder: (context) => const QRScannerPage(),
+                            ),
                           );
                         },
                       ),

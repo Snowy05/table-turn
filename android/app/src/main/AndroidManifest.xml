@@ -3,6 +3,8 @@
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
         <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+        <!-- Camera permission for QR code scanning -->
+        <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:label="tableturn_project0"
         android:name="${applicationName}"
