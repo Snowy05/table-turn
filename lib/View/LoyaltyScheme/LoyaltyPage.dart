@@ -3,6 +3,7 @@ import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 import 'BankCardUser.dart';
 import 'RewardWidget.dart';
 import 'MyRewardWidget.dart';
+import 'OpenRewardCard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../Controller/LoyaltyService.dart';
 import '../../Controller/ShopItemsService.dart';
@@ -187,22 +188,9 @@ class LoyaltyPage extends StatelessWidget {
                                   return MyRewardWidget(
                                     item: item,
                                     onOpen: () {
-                                      // implement open logic 
                                       showDialog(
                                         context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: Text('Open Reward'),
-                                          content: Text(
-                                            'You opened ${item.name}! (QR code or details go here)',
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Text('Close'),
-                                            ),
-                                          ],
-                                        ),
+                                        builder: (context) => OpenRewardCard(item: item),
                                       );
                                     },
                                   );
