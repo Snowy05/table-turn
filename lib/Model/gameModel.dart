@@ -3,6 +3,22 @@ class GameModel {
   final String gameName;
   final int minPlayers;
   final int maxPlayers;
+
+  ///player tag string for filtering (e.g., '2p', '3-4p', '5p+')
+  String get playerTag {
+    if (minPlayers == maxPlayers) {
+      return '${minPlayers}p';
+    } else if (minPlayers == 2 && maxPlayers == 2) {
+      return '2p';
+    } else if (minPlayers == 3 && maxPlayers == 4) {
+      return '3-4p';
+    } else if (maxPlayers >= 5) {
+      return '5p+';
+    } else {
+      return '2${minPlayers}-${maxPlayers}p';
+    }
+  }
+
   final String description;
   final List<String> categories;
   final List<String> ageGroups;
