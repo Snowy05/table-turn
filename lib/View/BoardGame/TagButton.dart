@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'BoardGameCardOpen.dart';
 
 class Tagbttn extends StatelessWidget {
   final Set<String> selectedTags;
@@ -35,8 +36,27 @@ class Tagbttn extends StatelessWidget {
                       children: allTags
                           .map<Widget>(
                             (tag) => FilterChip(
-                              label: Text(tag),
+                              label: Text(
+                                tag,
+                                style: const TextStyle(color: Colors.white),
+                              ),
                               selected: tempSelected.contains(tag),
+                              backgroundColor: BoardGameCardOpen.tagColor(
+                                tag,
+                                context,
+                              ),
+                              selectedColor: BoardGameCardOpen.tagColor(
+                                tag,
+                                context,
+                              ).withOpacity(0.85),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
+                                  bottomLeft: Radius.circular(24),
+                                  bottomRight: Radius.circular(24),
+                                ),
+                              ),
                               onSelected: (isSelected) {
                                 setModalState(() {
                                   if (isSelected) {

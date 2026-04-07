@@ -114,10 +114,9 @@ class _BoardGameState extends State<BoardGame> {
                   // Filter by age group if selected
                   if (selectedAgeGroup != null &&
                       selectedAgeGroup!.isNotEmpty &&
-                      game.ageGroups != selectedAgeGroup) {
+                      !game.ageGroups.contains(selectedAgeGroup)) {
                     return false;
                   }
-                  ;
                   // Filter by complexity if selected
                   if (selectedComplexity != null &&
                       selectedComplexity!.isNotEmpty &&
@@ -158,7 +157,6 @@ class _BoardGameState extends State<BoardGame> {
           ),
         ],
       ),
-      
     );
   }
 }
