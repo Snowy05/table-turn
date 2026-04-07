@@ -3,7 +3,7 @@ import 'package:tableturn_project0/Model/gameModel.dart';
 
 class BoardGameCardOpen extends StatelessWidget {
   final GameModel game;
-//custom card widget to display detailed game information in a pop-up dialog with tabs for details and instructions
+  //custom card widget to display detailed game information in a pop-up dialog with tabs for details and instructions
   const BoardGameCardOpen({super.key, required this.game});
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class BoardGameCardOpen extends StatelessWidget {
                           'Players: ${game.minPlayers} - ${game.maxPlayers}',
                         ),
                         Text('Complexity: ${game.complexity}'),
-                        Text('Categories: ${game.categories.join(', ')}'),
+                        // Categories removed from GameModel; use tags or other fields if needed
                         Text('Tags: ${game.tags.join(', ')}'),
                         Text('Age Groups: ${game.ageGroups.join(', ')}'),
                         Text('Play Times: ${game.playTimes.join(', ')}'),

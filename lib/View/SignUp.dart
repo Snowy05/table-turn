@@ -22,26 +22,24 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _ageController = TextEditingController();
 
   //testing game
-//   final game = GameModel(
-//   uid: '', 
-//   gameName: 'Catan',
-//   minPlayers: 3,
-//   maxPlayers: 4,
-//   description: 'A classic strategy game.',
-//   categories: ['Strategy', 'Family'],
-//   ageGroups: ['12+'],
-//   imageAsset: 'assets/images/catan.jpg',
-//   imageUrl: '',
-//   complexity: 'Medium',
-//   playTimes: ['1-2 hours'],
-//   tags: ['Classic', 'Strategy Game'],
-//   isAvailable: true,
-//   isAvailableForBooking: true,
-//   availabilityStatus: 'Available',
-//   quantityInStock: 5,
-// );
-
-
+  //   final game = GameModel(
+  //   uid: '',
+  //   gameName: 'Catan',
+  //   minPlayers: 3,
+  //   maxPlayers: 4,
+  //   description: 'A classic strategy game.',
+  //   // categories removed
+  //   ageGroups: ['12+'],
+  //   imageAsset: 'assets/images/catan.jpg',
+  //   imageUrl: '',
+  //   complexity: 'Medium',
+  //   playTimes: ['1-2 hours'],
+  //   tags: ['Classic', 'Strategy Game'],
+  //   isAvailable: true,
+  //   isAvailableForBooking: true,
+  //   availabilityStatus: 'Available',
+  //   quantityInStock: 5,
+  // );
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,20 +92,25 @@ class _SignUpPageState extends State<SignUpPage> {
                 //     );
                 //   }
                 // }),
-                LoginButton(text: 'Back to Login', onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/login');
-                }),
+                LoginButton(
+                  text: 'Back to Login',
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                ),
                 SizedBox(width: 16.0),
-                LoginButton(text: 'Signup', onPressed: 
-                  () async {
+                LoginButton(
+                  text: 'Signup',
+                  onPressed: () async {
                     try {
-                      UserCredential userCredential = await AuthService().signUp(
-                        _emailController.text,
-                        _passwordController.text,
-                        _nameController.text,
-                        _phoneNumberController.text,
-                        _ageController.text,
-                      );
+                      UserCredential userCredential = await AuthService()
+                          .signUp(
+                            _emailController.text,
+                            _passwordController.text,
+                            _nameController.text,
+                            _phoneNumberController.text,
+                            _ageController.text,
+                          );
                       //if signup success go to login page else show error message
                       Navigator.pushReplacementNamed(context, '/dashboard');
                     } catch (e) {

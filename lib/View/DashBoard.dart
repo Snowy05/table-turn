@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 import 'package:tableturn_project0/GlobalWidgets/WidgetMenuBttn.dart';
+import 'package:tableturn_project0/Model/boardgame_samples.dart';
 import 'package:tableturn_project0/Model/userModel.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -18,6 +19,24 @@ class DashboardPage extends StatelessWidget {
       });
       return SizedBox.shrink(); // Return an empty widget while redirecting
     }
+    // DEBUG: Button to add all sample games to Firestore
+    // Widget debugAddGameButton = Padding(
+    //   padding: const EdgeInsets.symmetric(vertical: 12.0),
+    //   child: ElevatedButton.icon(
+    //     icon: const Icon(Icons.add_box),
+    //     label: const Text('DEBUG: Add All Sample Games'),
+    //     onPressed: () async {
+    //       int added = 0;
+    //       for (final game in boardgameSamples) {
+    //         await FirebaseFirestore.instance.collection('boardgames').add(game);
+    //         added++;
+    //       }
+    //       ScaffoldMessenger.of(
+    //         context,
+    //       ).showSnackBar(SnackBar(content: Text('$added sample games added!')));
+    //     },
+    //   ),
+    // );
     return Scaffold(
       appBar: AppBar(title: const Text('Dashboard')),
 
@@ -55,6 +74,7 @@ class DashboardPage extends StatelessWidget {
                 children: [
                   Center(child: Text('Welcome, ${appUser.name}!')),
                   SizedBox(height: 20),
+                  // debugAddGameButton, // Uncomment this line to show the debug button for adding sample games to Firestore
                   WidgetMenubttn(
                     label: 'View Board Games',
                     imageAsset: 'assets/images/minimalistboardgamed.png',
@@ -95,6 +115,13 @@ class DashboardPage extends StatelessWidget {
                     imageAsset: 'assets/images/hamburgerMenu.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/qr');
+                    },
+                  ),
+                  WidgetMenubttn(
+                    label: 'Find Your Game',
+                    imageAsset: 'assets/images/questionnaire.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/findyourgame');
                     },
                   ),
                 ],

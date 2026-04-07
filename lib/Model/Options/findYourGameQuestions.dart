@@ -5,18 +5,18 @@ final List<GameQuestion> questionnaire = [
   GameQuestion(
     question: "What kind of vibe are you feeling today?",
     answers: [
-      GameAnswer(text: "Let’s get silly and laugh!", tags: ["party", "fun"]),
+      GameAnswer(text: "Let’s get silly and laugh!", tags: ["Party Game"]),
       GameAnswer(
         text: "I’m ready for some friendly competition.",
         tags: ["Strategy Game"],
       ),
       GameAnswer(
-        text: "I want to work together and chill.",
-        tags: ["cooperative"],
+        text: "I want to work together and chill.", // need to widen the list
+        tags: ["Cooperative Game"],
       ),
       GameAnswer(
         text: "Give me a brain teaser or mystery!",
-        tags: ["Trivia Game", "Word Game"],
+        tags: ["Trivia", "Word Game"],
       ),
       GameAnswer(
         text: "Something quick and easy, please.",
@@ -43,7 +43,7 @@ final List<GameQuestion> questionnaire = [
         text: "Just a quick round (15–30 min)",
         tags: ["Under 30 minutes"],
       ),
-      GameAnswer(text: "A solid session (30–60 min)", tags: ["medium"]),
+      GameAnswer(text: "A solid session (30–60 min)", tags: ["30-60 minutes"]),
       GameAnswer(
         text: "All night long! (1+ hour)",
         tags: ["1-2 hours", "Over 2 hours"],
@@ -54,7 +54,7 @@ final List<GameQuestion> questionnaire = [
     question: "How do you feel about rules?",
     answers: [
       GameAnswer(text: "Keep it super simple", tags: ["Easy"]),
-      GameAnswer(text: "I can handle a little complexity", tags: ["medium"]),
+      GameAnswer(text: "I can handle a little complexity", tags: ["Medium"]), //done
       GameAnswer(text: "Bring on the challenge!", tags: ["Hard", "Expert"]),
     ],
   ),
@@ -62,9 +62,9 @@ final List<GameQuestion> questionnaire = [
     question: "Who’s playing?",
     answers: [
       GameAnswer(text: "Kids only", tags: ["Kids"]),
-      GameAnswer(text: "Teens", tags: ["teens"]),
-      GameAnswer(text: "Adults", tags: ["adults"]),
-      GameAnswer(text: "A mix of ages", tags: ["family"]),
+      GameAnswer(text: "Teens", tags: ["Teens"]),
+      GameAnswer(text: "Adults", tags: ["Adults"]), //done
+      GameAnswer(text: "A mix of ages", tags: ["Family"]),
     ],
   ),
 ];

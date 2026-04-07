@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGame.dart';
 import 'package:tableturn_project0/View/Booking/BookingPage.dart';
+import 'package:tableturn_project0/View/FindYourGame.dart';
 import 'package:tableturn_project0/View/GOW/GOWPage.dart';
 import 'package:tableturn_project0/View/GOW/GOWVotingPage.dart';
 import 'package:tableturn_project0/View/LoyaltyScheme/LoyaltyPage.dart';
@@ -74,6 +75,7 @@ class MyApp extends StatelessWidget {
         '/gowresults': (context) => GOWPage(),
         '/loyalty': (context) => LoyaltyPage(),
         '/qr': (context) => QrCodeGenerator(),
+        '/findyourgame': (context) => FindYourGameQuiz(),
       },
     );
   }
