@@ -59,7 +59,7 @@ class BoardGameCardOpen extends StatelessWidget {
             TabBar(
               tabs: [
                 Tab(text: 'Details'),
-                Tab(text: 'Tutorial'),
+                Tab(text: 'Walkthrough'),
               ],
               labelColor: Theme.of(context).primaryColor,
             ),
@@ -158,9 +158,11 @@ class BoardGameCardOpen extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Close'),
+              child: Center(
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Close'),
+                ),
               ),
             ),
           ],
