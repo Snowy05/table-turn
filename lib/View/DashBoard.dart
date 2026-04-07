@@ -22,75 +22,85 @@ class DashboardPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Dashboard')),
 
       // Fetch user data from Firestore and display it in this case name
-      // could have used .select() but firebase does not support it yet, so we fetch the whole 
-      //document and use only the name field, this is not ideal but it works for now, will need to be optimized 
+      // could have used .select() but firebase does not support it yet, so we fetch the whole
+      //document and use only the name field, this is not ideal but it works for now, will need to be optimized
       //in the future when firebase supports .select() or we switch to another database that supports it
       body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance.collection('users').doc(user.uid).get(),
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+          if (snapshot.hasError ||
+              !snapshot.hasData ||
+              !snapshot.data!.exists) {
             return Center(child: Text('Failed to load user data'));
           }
-          final appUser = AppUser.fromMap(snapshot.data!.data() as Map<String, dynamic>, snapshot.data!.id);
+          final appUser = AppUser.fromMap(
+            snapshot.data!.data() as Map<String, dynamic>,
+            snapshot.data!.id,
+          );
 
-      return SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(child: Text('Welcome, ${appUser.name}!')),
-              SizedBox(height: 20),
-              WidgetMenubttn(
-                label: 'View Board Games',
-                imageAsset: 'assets/images/board_games.png',
-                onTap: () {
-                  Navigator.pushNamed(context, '/boardgames');
-                },
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 24.0,
               ),
-              WidgetMenubttn(
-                label: 'Book a Table',
-                imageAsset: 'assets/images/book_table.png',
-                onTap: () {
-                  Navigator.pushNamed(context, '/bookings');
-                },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(child: Text('Welcome, ${appUser.name}!')),
+                  SizedBox(height: 20),
+                  WidgetMenubttn(
+                    label: 'View Board Games',
+                    imageAsset: 'assets/images/minimalistboardgame d.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/boardgames');
+                    },
+                  ),
+                  WidgetMenubttn(
+                    label: 'Book a Table',
+                    imageAsset: 'assets/images/minimalistBook.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/bookings');
+                    },
+                  ),
+                  WidgetMenubttn(
+                    label: 'View Menu',
+                    imageAsset: 'assets/images/minimalistMenuD.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/menu');
+                    },
+                  ),
+                  WidgetMenubttn(
+                    label: 'Vote for Game of the Week',
+                    imageAsset: 'assets/images/gow.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/gow');
+                    },
+                  ),
+                  WidgetMenubttn(
+                    label: 'View Game of the Week',
+                    imageAsset: 'assets/images/friesMenu.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/gowresults');
+                    },
+                  ),
+                  WidgetMenubttn(
+                    label: 'qr code',
+                    imageAsset: 'assets/images/hamburgerMenu.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/qr');
+                    },
+                  ),
+                ],
               ),
-              WidgetMenubttn(
-                label: 'View Menu',
-                imageAsset: 'assets/images/view_menu.png',
-                onTap: () {
-                  Navigator.pushNamed(context, '/menu');
-                },
-              ),
-              WidgetMenubttn(
-                label: 'Vote for Game of the Week',
-                imageAsset: 'assets/images/vote_gow.png',
-                onTap: () {
-                  Navigator.pushNamed(context, '/gow');
-                },
-              ),
-              WidgetMenubttn(
-                  label: 'View Game of the Week',
-                  imageAsset: 'assets/images/gow_results.png',
-                  onTap: () {
-                    Navigator.pushNamed(context, '/gowresults');
-                  },
-                ),
-                WidgetMenubttn(
-                  label: 'qr code',
-                  imageAsset: 'assets/images/loyalty.png',
-                  onTap: () {
-                    Navigator.pushNamed(context, '/qr');
-                  },
-                ),
-
-            ],
-          ),
-        ),
-      );
+            ),
+          );
         },
       ),
       bottomNavigationBar: CustomBottomNavBar(
