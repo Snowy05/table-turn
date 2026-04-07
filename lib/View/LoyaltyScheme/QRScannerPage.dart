@@ -41,19 +41,32 @@ class _QRScannerPageState extends State<QRScannerPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Scan QR Code')),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(child: MobileScanner(onDetect: _handleCapture)),
-          if (_resultMessage != null)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                _resultMessage!,
-                style: const TextStyle(
-                  color: Colors.green,
-                  fontSize: 18,
-                ),
+          const SizedBox(height: 32),
+          Center(
+            //Added some design to scanner
+            child: SizedBox(
+              width: 280,
+              height: 280,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: MobileScanner(onDetect: _handleCapture),
               ),
             ),
+          ),
+          const SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              _resultMessage ?? 'Find an easter egg QR code in the Cafe to earn points!',
+              style: TextStyle(
+                color: _resultMessage != null ? Colors.green : Colors.black54,
+                fontSize: 18,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
     );

@@ -28,7 +28,7 @@ class WidgetMenubttn extends StatelessWidget {
           ),
           child: SizedBox(
             width: double.infinity,
-            height: 120, 
+            height: 120,
             child: Row(
               children: [
                 Expanded(
@@ -44,14 +44,19 @@ class WidgetMenubttn extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: imageAsset != null
-                        ? Image.asset(imageAsset!, fit: BoxFit.contain)
-                        : icon != null
-                        ? Icon(icon, size: 40)
-                        : SizedBox.shrink(),
-                  ),
+                  child: imageAsset != null
+                      ? SizedBox.expand(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              imageAsset!,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        )
+                      : icon != null
+                      ? Center(child: Icon(icon, size: 40))
+                      : SizedBox.shrink(),
                 ),
               ],
             ),

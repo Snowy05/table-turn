@@ -57,7 +57,7 @@ class DashboardPage extends StatelessWidget {
                   SizedBox(height: 20),
                   WidgetMenubttn(
                     label: 'View Board Games',
-                    imageAsset: 'assets/images/minimalistboardgame d.png',
+                    imageAsset: 'assets/images/minimalistboardgamed.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/boardgames');
                     },
