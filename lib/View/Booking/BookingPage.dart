@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tableturn_project0/Controller/BookingService.dart';
+import 'package:tableturn_project0/Controller/BookingHelpers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/TableAvailabilityService.dart'
     as table_availability;
@@ -35,18 +36,9 @@ class _BookingPageState extends State<BookingPage> {
       _loadingFullness = true;
     });
     final bookingForm = Provider.of<BookingFormModel>(context, listen: false);
-    final Map<DateTime, double> result = {};
-    final now = DateTime.now();
-    for (int i = 0; i < 7; i++) {
-      final day = DateTime(now.year, now.month, now.day + i);
-      final dateStr = day.toIso8601String().split('T')[0];
-      final availableSlots = await table_availability.Tableavailabilityservice()
-          .getAvailableSlots(dateStr, bookingForm.selectedTable ?? 'table1');
-      final booked =
-          options_constants.defaultSlots.length - availableSlots.length;
-      final fullness = booked / options_constants.defaultSlots.length;
-      result[DateTime(day.year, day.month, day.day)] = fullness;
-    }
+    final result = await BookingHelpers.fetchFullnessForNextWeek(
+      bookingForm.selectedTable,
+    );
     setState(() {
       _fullnessByDay = result;
       _loadingFullness = false;
@@ -76,13 +68,7 @@ class _BookingPageState extends State<BookingPage> {
     setState(() {
       _loadingBoardgames = true;
     });
-    final snapshot = await FirebaseFirestore.instance
-        .collection('boardgames')
-        .where('isAvailableForBooking', isEqualTo: true)
-        .get();
-    final games = snapshot.docs
-        .map((doc) => GameModel.fromMap(doc.data(), doc.id))
-        .toList();
+    final games = await BookingHelpers.fetchAvailableBoardgames();
     setState(() {
       _availableBoardgames = games;
       _loadingBoardgames = false;
@@ -91,10 +77,7 @@ class _BookingPageState extends State<BookingPage> {
 
   //this function will get the slots needed for the booking duration, e.g., if the user selects 12:00 and a duration of 3 hours, it will return ['12:00', '14:00', '16:00']
   List<String> getSlotsForDuration(String startSlot, int duration) {
-    final slotTimes = options_constants.defaultSlots;
-    final startIdx = slotTimes.indexOf(startSlot);
-    if (startIdx == -1) return [];
-    return slotTimes.skip(startIdx).take(duration).toList();
+    return BookingHelpers.getSlotsForDuration(startSlot, duration);
   }
 
   Future<void> _submitBooking(BuildContext context) async {
@@ -108,7 +91,7 @@ class _BookingPageState extends State<BookingPage> {
     final availableSlots = await table_availability.Tableavailabilityservice()
         .getAvailableSlots(dateStr, bookingForm.selectedTable!);
 
-    final slotsNeeded = getSlotsForDuration(
+    final slotsNeeded = BookingHelpers.getSlotsForDuration(
       bookingForm.selectedSlot!,
       bookingForm.duration,
     );
@@ -162,22 +145,14 @@ class _BookingPageState extends State<BookingPage> {
       createdAt: DateTime.now(),
     );
 
-    try {
-      await BookingService().createBooking(booking);
-      for (final slot in slotsNeeded) {
-        await table_availability.Tableavailabilityservice().bookSlot(
-          dateStr,
-          bookingForm.selectedTable!,
-          slot,
-        );
-      }
-      if (bookingForm.selectedBoardgame != null &&
-          bookingForm.selectedBoardgame != 'None') {
-        final gameRef = FirebaseFirestore.instance
-            .collection('boardgames')
-            .doc(bookingForm.selectedBoardgame);
-        await gameRef.update({'quantityInStock': FieldValue.increment(-1)});
-      }
+    final error = await BookingHelpers.submitBooking(
+      booking: booking,
+      slotsNeeded: slotsNeeded,
+      dateStr: dateStr,
+      tableId: bookingForm.selectedTable!,
+      boardGameId: bookingForm.selectedBoardgame,
+    );
+    if (error == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Booking successful!')));
@@ -186,10 +161,10 @@ class _BookingPageState extends State<BookingPage> {
       setState(() {
         _currentStep = 0;
       });
-    } catch (e) {
+    } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Booking failed: $e')));
+      ).showSnackBar(SnackBar(content: Text('Booking failed: $error')));
     }
   }
 
@@ -415,7 +390,7 @@ class _BookingPageState extends State<BookingPage> {
             case 2:
               Navigator.pushReplacementNamed(context, '/profile');
               break;
-              case 3:
+            case 3:
               Navigator.pushReplacementNamed(context, '/loyalty');
               break;
           }
