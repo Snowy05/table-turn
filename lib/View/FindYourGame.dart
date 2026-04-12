@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tableturn_project0/View/BoardGame/BoardGameCard.dart';
+import 'package:tableturn_project0/View/BoardGame/BoardGameCardOpen.dart';
 import '../Model/Options/findYourGameQuestions.dart';
 import '../Controller/FindYourGameService.dart';
 import '../Model/findYourGameModels.dart';
+import '../Model/gameModel.dart';
 
 class FindYourGameQuiz extends StatefulWidget {
   const FindYourGameQuiz({Key? key}) : super(key: key);
@@ -60,36 +63,39 @@ class _FindYourGameQuizState extends State<FindYourGameQuiz> {
             ? const Center(child: Text('No games matched your answers.'))
             : ListView.builder(
                 itemCount: _recommendations!.length,
+                // convert BoardGame to GameModel for card widgets
                 itemBuilder: (context, idx) {
-                  final game = _recommendations![idx];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    child: ListTile(
-                      leading: game.imageAsset.isNotEmpty
-                          ? Image.asset(
-                              game.imageAsset,
-                              width: 48,
-                              height: 48,
-                              fit: BoxFit.cover,
-                            )
-                          : null,
-                      title: Text(game.name),
-                      subtitle: Text(game.description),
-                      trailing: Wrap(
-                        spacing: 4,
-                        children: game.tags
-                            .map(
-                              (t) => Chip(
-                                label: Text(t),
-                                visualDensity: VisualDensity.compact,
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
+                  final boardGame = _recommendations![idx];
+                  // Convert BoardGame to GameModel for card widgets
+                  final game = GameModel(
+                    uid: '',
+                    gameName: boardGame.name,
+                    minPlayers: boardGame.minPlayers,
+                    maxPlayers: boardGame.maxPlayers,
+                    description: boardGame.description,
+                    imageAsset: boardGame.imageAsset,
+                    imageUrl: '',
+                    ageGroups: [],
+                    complexity: '',
+                    playTimes: boardGame.playTimes,
+                    tags: boardGame.tags,
+                    tutorial: boardGame is dynamic && boardGame.tutorial != null
+                        ? boardGame.tutorial
+                        : '',
+                    isAvailable: true,
+                    isAvailableForBooking: true,
+                    availabilityStatus: 'Available',
+                    quantityInStock: 1,
+                  );
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            Dialog(child: BoardGameCardOpen(game: game)),
+                      );
+                    },
+                    child: BoardGameCard(game: game),
                   );
                 },
               ),

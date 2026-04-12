@@ -4,6 +4,7 @@ class GameQuestion {
 
   GameQuestion({required this.question, required this.answers});
 }
+
 //model for find your game questionnaire, each question has a list of answers, each answer has a list of tags, the tags will be used to filter the games
 class GameAnswer {
   final String text;
@@ -17,11 +18,19 @@ class BoardGame {
   final String description;
   final String imageAsset;
   final List<String> tags;
+  final int minPlayers;
+  final int maxPlayers;
+  final List<String> playTimes;
+  final String tutorial;
 
   BoardGame({
     required this.name,
     required this.description,
     required this.imageAsset,
     required this.tags,
+    required this.minPlayers,
+    required this.maxPlayers,
+    required this.playTimes,
+    this.tutorial = '',
   });
 }

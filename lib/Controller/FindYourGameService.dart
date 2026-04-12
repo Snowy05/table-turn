@@ -9,11 +9,23 @@ Future<List<BoardGame>> fetchBoardGamesFromFirestore() async {
       .get();
   return snapshot.docs.map((doc) {
     final data = doc.data();
+    // Robustly handle playTimes as List<String> or String
+    List<String> playTimesList = [];
+    final pt = data['playTimes'];
+    if (pt is List) {
+      playTimesList = pt.map((e) => e.toString()).toList();
+    } else if (pt is String) {
+      playTimesList = [pt];
+    }
     return BoardGame(
-      name: data['name'] ?? '',
+      name: data['name'] ?? data['gameName'] ?? '',
       description: data['description'] ?? '',
       imageAsset: data['imageAsset'] ?? '',
       tags: List<String>.from(data['tags'] ?? []),
+      minPlayers: data['minPlayers'] ?? 1,
+      maxPlayers: data['maxPlayers'] ?? 10,
+      playTimes: playTimesList,
+      tutorial: data['tutorial'] ?? '',
     );
   }).toList();
 }
@@ -23,10 +35,10 @@ List<BoardGame> recommendGames(
   List<List<String>> selectedTags,
   List<BoardGame> games,
 ) {
-  // Convert all tags to lowercase for case-insensitive matching
+  //convert all tags to lowercase and trim for case-insensitive, whitespace-robust matching
   final tags = selectedTags
       .expand((t) => t)
-      .map((t) => t.toLowerCase())
+      .map((t) => t.trim().toLowerCase())
       .toSet();
 
   // Define which tags are considered player count and age group (lowercase)
@@ -40,62 +52,66 @@ List<BoardGame> recommendGames(
 
   final results = <BoardGame>[];
   for (final game in games) {
-    final gameTags = game.tags.map((t) => t.toLowerCase()).toSet();
-
-    // For BoardGame, we only have tags, but if you use GameModel, you can add:
-    // final gameAgeGroups = (game.ageGroups ?? []).map((t) => t.toLowerCase()).toSet();
-    // final gamePlayTimes = (game.playTimes ?? []).map((t) => t.toLowerCase()).toSet();
-    // final gameComplexity = (game.complexity ?? '').toLowerCase();
+    //added robust tag processing for game tags as well
+    final gameTags = game.tags.map((t) => t.trim().toLowerCase()).toSet();
 
     // Strict tag match (for tags not covered by fields)
     final strictMatches = strictTags
         .where((tag) => gameTags.contains(tag))
         .length;
-    final strictOk =
-        strictTags.isEmpty || strictMatches >= (strictTags.length - 1);
+    //more forgiving: at least one strict tag must match if any strict tags selected
+    final strictOk = strictTags.isEmpty || strictMatches >= 1;
 
-    // Player count match (tags only)
-    final playerMatch =
-        selectedPlayerCounts.isEmpty ||
-        gameTags.intersection(selectedPlayerCounts).isNotEmpty;
+    // player count match (use minPlayers/maxPlayers)
+    bool playerMatch = true;
+    if (selectedPlayerCounts.isNotEmpty) {
+      if (selectedPlayerCounts.contains('2p')) {
+        playerMatch = game.minPlayers <= 2 && game.maxPlayers >= 2;
+      } else if (selectedPlayerCounts.contains('3-4p')) {
+        playerMatch = game.minPlayers <= 4 && game.maxPlayers >= 3;
+      } else if (selectedPlayerCounts.contains('5p+')) {
+        playerMatch = game.maxPlayers >= 5;
+      }
+    }
 
     // Age group match: allow match if tag OR (if available) ageGroups field matches
     bool ageMatch = true;
     if (selectedAgeGroups.isNotEmpty) {
-      // Try to match via tags (BoardGame)
       ageMatch = gameTags.intersection(selectedAgeGroups).isNotEmpty;
-      // If you use GameModel, also check ageGroups field:
-      // ageMatch = ageMatch || gameAgeGroups.intersection(selectedAgeGroups).isNotEmpty;
     }
 
-    // Play time match: allow match if tag OR (if available) playTimes field matches
+    //plllay time match: use playTimes field (case-insensitive, whitespace-robust, supports multiple)
     bool playTimeMatch = true;
-    final playTimeTags = {
+    final playTimeOptions = [
       'under 30 minutes',
       '30-60 minutes',
       '1-2 hours',
       'over 2 hours',
-      'medium',
-    };
-    final selectedPlayTimes = tags.intersection(playTimeTags);
+    ];
+    final selectedPlayTimes = playTimeOptions
+        .where((pt) => tags.contains(pt))
+        .map((pt) => pt.trim().toLowerCase())
+        .toSet();
     if (selectedPlayTimes.isNotEmpty) {
-      playTimeMatch = gameTags.intersection(selectedPlayTimes).isNotEmpty;
-      // If you use GameModel, also check playTimes field:
-      // playTimeMatch = playTimeMatch || gamePlayTimes.intersection(selectedPlayTimes).isNotEmpty;
+      final gamePlayTimes = game.playTimes
+          .map((pt) => pt.trim().toLowerCase())
+          .toSet();
+      playTimeMatch = selectedPlayTimes.any((pt) => gamePlayTimes.contains(pt));
     }
 
     // Complexity match: allow match if tag OR (if available) complexity field matches
     bool complexityMatch = true;
-    final complexityTags = {'easy', 'medium', 'hard', 'expert'};
+    final complexityTags = {'Easy', 'Medium', 'Hard', 'Expert'};
     final selectedComplexities = tags.intersection(complexityTags);
     if (selectedComplexities.isNotEmpty) {
       complexityMatch = gameTags.intersection(selectedComplexities).isNotEmpty;
-      // If you use GameModel, also check complexity field:
-      // complexityMatch = complexityMatch || selectedComplexities.contains(gameComplexity);
     }
 
+    //relaxed: only require playerMatch and playTimeMatch, others are optional
     final match =
-        strictOk && playerMatch && ageMatch && playTimeMatch && complexityMatch;
+        playerMatch &&
+        playTimeMatch &&
+        (strictOk || ageMatch || complexityMatch);
     if (match) results.add(game);
   }
   return results;

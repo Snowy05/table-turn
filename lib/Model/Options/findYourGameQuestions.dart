@@ -5,26 +5,29 @@ final List<GameQuestion> questionnaire = [
   GameQuestion(
     question: "What kind of vibe are you feeling today?",
     answers: [
-      GameAnswer(text: "Let’s get silly and laugh!", tags: ["Party Game"]),
+      GameAnswer(
+        text: "Let’s get silly and laugh!",
+        tags: ["Party Game", "Family Favorite", "New"],
+      ),
       GameAnswer(
         text: "I’m ready for some friendly competition.",
-        tags: ["Strategy Game"],
+        tags: ["Strategy Game", "Card Game", "Dice Game", "Classic"],
       ),
       GameAnswer(
         text: "I want to work together and chill.", // need to widen the list
-        tags: ["Cooperative Game"],
+        tags: ["Cooperative Game", "Family", "For Kids"],
       ),
       GameAnswer(
         text: "Give me a brain teaser or mystery!",
-        tags: ["Trivia", "Word Game"],
+        tags: ["Trivia", "Word Game", "Drawing Game"],
       ),
       GameAnswer(
         text: "Something quick and easy, please.",
-        tags: ["Under 30 minutes", "Easy"],
+        tags: ["Under 30 minutes", "Easy", "Party Game", "Card Game"],
       ),
       GameAnswer(
         text: "I’m in the mood for a deep, strategic battle.",
-        tags: ["Strategy Game", "Hard", "Expert"],
+        tags: ["Strategy Game", "Hard", "Expert", "Long-Haul"],
       ),
     ],
   ),
@@ -54,7 +57,10 @@ final List<GameQuestion> questionnaire = [
     question: "How do you feel about rules?",
     answers: [
       GameAnswer(text: "Keep it super simple", tags: ["Easy"]),
-      GameAnswer(text: "I can handle a little complexity", tags: ["Medium"]), //done
+      GameAnswer(
+        text: "I can handle a little complexity",
+        tags: ["Medium"],
+      ), //done
       GameAnswer(text: "Bring on the challenge!", tags: ["Hard", "Expert"]),
     ],
   ),
