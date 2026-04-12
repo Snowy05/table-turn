@@ -44,6 +44,74 @@ class MyApp extends StatelessWidget {
         side: BorderSide(color: Colors.black, width: 2),
       ),
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(primaryColor),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: Colors.black, width: 1),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.black, width: 1),
+          ),
+        ),
+        textStyle: WidgetStateProperty.all(
+          const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            // White text, black stroke will be handled in button child
+          ),
+        ),
+        elevation: WidgetStateProperty.all(2),
+        padding: WidgetStateProperty.all(
+          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(primaryColor),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: Colors.black, width: 1),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.black, width: 1),
+          ),
+        ),
+        textStyle: WidgetStateProperty.all(
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        padding: WidgetStateProperty.all(
+          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(primaryColor),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: Colors.black, width: 1),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.black, width: 1),
+          ),
+        ),
+        textStyle: WidgetStateProperty.all(
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        padding: WidgetStateProperty.all(
+          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
       selectedItemColor: primaryColor,
