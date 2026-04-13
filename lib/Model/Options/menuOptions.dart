@@ -12,6 +12,7 @@ const List<String> dietaryTags = [
   'Low-Carb',
   'Low-Fat',
   'Low-Sugar',
+   'Non-Alcoholic',
 ];
 
 const List<String> menuTags = [
@@ -22,15 +23,21 @@ const List<String> menuTags = [
  'Classic',
  'Craft',
  'Seasonal',
- 'Non-Alcoholic',
   'Low ABV',
   'High ABV',
+  'Dessert',
+  'New',
+
 ];
 
 const List<String> menuCategories = [
   'Drink',
   'Food',
   'Combo',
+  'Alcohol',
+  'Cocktail',
+  'Non-Alcoholic',
+  'Side',
   'Other',
 ];
 

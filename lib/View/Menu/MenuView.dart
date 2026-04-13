@@ -3,6 +3,8 @@ import '../../Controller/MenuItemsServices.dart';
 import '../../Model/menuItemModel.dart';
 import 'MenuItemCard.dart';
 import 'MenuItemCardOpen.dart';
+import 'package:tableturn_project0/View/Menu/menu_seed_items.dart';
+import '../../Model/Options/menuOptions.dart';
 
 class MenuView extends StatefulWidget {
   const MenuView({Key? key}) : super(key: key);
@@ -12,15 +14,41 @@ class MenuView extends StatefulWidget {
 }
 
 class _MenuViewState extends State<MenuView> {
+  // For secondary tag filtering
+  final Set<String> _selectedTags = {};
+
+  List<String> get _availableTags {
+    // Show tags based on main filter
+    if (_selectedFilter == 'Vegetarian') {
+      return dietaryTags;
+    } else if (_selectedFilter == 'Drinks') {
+      return menuTags;
+    } else if (_selectedFilter == 'Food') {
+      return menuTags;
+    } else if (_selectedFilter == 'Dessert') {
+      return menuTags;
+    }
+    // For 'All' or other, show all tags
+    return {...dietaryTags, ...menuTags}.toList();
+  }
+
   final List<String> _filters = [
     'All',
     'Vegetarian',
     'Food',
     'Drinks',
+    'Sides',
     'Dessert',
   ];
   String _selectedFilter = 'All';
   final MenuItemsService _menuService = MenuItemsService();
+
+  Future<void> seedMenuItems() async {
+    for (final item in menuSeedItems) {
+      await _menuService.addMenuItem(item);
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,28 +56,14 @@ class _MenuViewState extends State<MenuView> {
       appBar: AppBar(title: const Text('Menu')),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Add a mock menu item
-          final mockItem = MenuItemModel(
-            uid: DateTime.now().millisecondsSinceEpoch.toString(),
-            name: 'Mock Item',
-            description: 'A delicious mock menu item.',
-            price: 9.99,
-            imageUrl:
-                'assets/images/mock_food.png', // Update this to your asset path
-            category: ['Drink'],
-            isAvailable: true,
-            calories: '350',
-            menuTags: ['Dessert'],
-            dietaryTags: ['Drink'],
-          );
-          await _menuService.addMenuItem(mockItem);
-          setState(() {});
+          await seedMenuItems();
         },
         child: const Icon(Icons.add),
-        tooltip: 'Add Mock Menu Item',
+        tooltip: 'Seed Menu Items',
       ),
       body: Column(
         children: [
+          // Main filter bar
           SizedBox(
             height: 48,
             child: ListView.builder(
@@ -63,6 +77,7 @@ class _MenuViewState extends State<MenuView> {
                   onTap: () {
                     setState(() {
                       _selectedFilter = filter;
+                      _selectedTags.clear(); // Clear tags on main filter change
                     });
                   },
                   child: Container(
@@ -96,6 +111,61 @@ class _MenuViewState extends State<MenuView> {
               },
             ),
           ),
+          // Secondary tag filter bar
+          if (_availableTags.isNotEmpty)
+            SizedBox(
+              height: 44,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                itemCount: _availableTags.length,
+                itemBuilder: (context, index) {
+                  final tag = _availableTags[index];
+                  final isSelected = _selectedTags.contains(tag);
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: FilterChip(
+                      label: Text(tag),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            _selectedTags.add(tag);
+                          } else {
+                            _selectedTags.remove(tag);
+                          }
+                        });
+                      },
+                      selectedColor: Theme.of(
+                        context,
+                      ).colorScheme.primary.withOpacity(0.2),
+                      checkmarkColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Colors.white,
+                      labelStyle: TextStyle(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.black,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          if (_selectedTags.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedTags.clear();
+                  });
+                },
+                child: const Text('Clear Tags'),
+              ),
+            ),
           Expanded(
             child: FutureBuilder<List<MenuItemModel>>(
               future: _menuService.fetchMenuItems(),
@@ -107,14 +177,12 @@ class _MenuViewState extends State<MenuView> {
                   return const Center(child: Text('Failed to load menu items'));
                 }
                 var items = snapshot.data ?? [];
-                //fFiltering logic
+                // Main filter logic
                 if (_selectedFilter != 'All') {
-                  //simple filtering based on what the selected filter is, it checks the relevant fields of the menu
-                  // item to see if it matches the filtern
                   if (_selectedFilter == 'Vegetarian') {
                     items = items
                         .where(
-                          (item) => item.dietaryTags.contains('Vegetarian'),
+                          (item) => item.dietaryTags.contains('Vegetarian' ),
                         )
                         .toList();
                   } else if (_selectedFilter == 'Food') {
@@ -129,7 +197,21 @@ class _MenuViewState extends State<MenuView> {
                     items = items
                         .where((item) => item.menuTags.contains('Dessert'))
                         .toList();
+                  } else if (_selectedFilter == 'Sides') {
+                    items = items
+                        .where((item) => item.category.contains('Side'))
+                        .toList();
                   }
+                }
+                // Secondary tag filter logic (multi-tag, AND logic)
+                if (_selectedTags.isNotEmpty) {
+                  items = items.where((item) {
+                    final allTags = <String>{
+                      ...item.dietaryTags,
+                      ...item.menuTags,
+                    };
+                    return _selectedTags.every((tag) => allTags.contains(tag));
+                  }).toList();
                 }
                 if (items.isEmpty) {
                   return const Center(child: Text('No menu items found'));
@@ -138,14 +220,14 @@ class _MenuViewState extends State<MenuView> {
                   padding: const EdgeInsets.all(8.0),
                   child: GridView.builder(
                     gridDelegate:
-                    //used a fixed cross axis count of 2 to show 2 items per row
+                        //used a fixed cross axis count of 2 to show 2 items per row
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
                           childAspectRatio: 1,
                         ),
-                        //item count is the length of the filtered items list
+                    //item count is the length of the filtered items list
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final item = items[index];
