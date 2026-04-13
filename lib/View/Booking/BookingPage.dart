@@ -216,52 +216,68 @@ class _BookingPageState extends State<BookingPage> {
               children: [
                 _loadingFullness
                     ? Center(child: CircularProgressIndicator())
-                    : TableCalendar(
-                        firstDay: DateTime.now(),
-                        lastDay: DateTime.now().add(Duration(days: 14)),
-                        focusedDay: bookingForm.selectedDate ?? DateTime.now(),
-                        headerStyle: HeaderStyle(
-                          formatButtonVisible: false,
-                          titleCentered: true,
-                        ),
-                        calendarFormat: CalendarFormat.twoWeeks,
-                        availableCalendarFormats: const {
-                          CalendarFormat.twoWeeks: 'Two Weeks',
+                    : Builder(
+                        builder: (context) {
+                          final firstDay = DateTime.now();
+                          final lastDay = DateTime.now().add(
+                            Duration(days: 14),
+                          );
+                          DateTime focusedDay =
+                              bookingForm.selectedDate ?? DateTime.now();
+                          if (focusedDay.isBefore(firstDay))
+                            focusedDay = firstDay;
+                          return TableCalendar(
+                            firstDay: firstDay,
+                            lastDay: lastDay,
+                            focusedDay: focusedDay,
+                            headerStyle: HeaderStyle(
+                              formatButtonVisible: false,
+                              titleCentered: true,
+                            ),
+                            calendarFormat: CalendarFormat.twoWeeks,
+                            availableCalendarFormats: const {
+                              CalendarFormat.twoWeeks: 'Two Weeks',
+                            },
+                            onDaySelected: (selectedDay, newFocusedDay) {
+                              bookingForm.setSelectedDate(selectedDay);
+                            },
+                            selectedDayPredicate: (day) =>
+                                isSameDay(day, bookingForm.selectedDate),
+                            calendarBuilders: CalendarBuilders(
+                              defaultBuilder: (context, day, focusedDay) {
+                                final key = DateTime(
+                                  day.year,
+                                  day.month,
+                                  day.day,
+                                );
+                                final fullness = _fullnessByDay[key] ?? 0.0;
+                                Color bg;
+                                if (fullness >= 0.8) {
+                                  bg = Colors.red;
+                                } else if (fullness >= 0.5) {
+                                  bg = Colors.orange;
+                                } else {
+                                  bg = Colors.green;
+                                }
+                                return Container(
+                                  margin: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: bg,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${day.day}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
                         },
-                        onDaySelected: (selectedDay, focusedDay) {
-                          bookingForm.setSelectedDate(selectedDay);
-                        },
-                        selectedDayPredicate: (day) =>
-                            isSameDay(day, bookingForm.selectedDate),
-                        calendarBuilders: CalendarBuilders(
-                          defaultBuilder: (context, day, focusedDay) {
-                            final key = DateTime(day.year, day.month, day.day);
-                            final fullness = _fullnessByDay[key] ?? 0.0;
-                            Color bg;
-                            if (fullness >= 0.8) {
-                              bg = Colors.red;
-                            } else if (fullness >= 0.5) {
-                              bg = Colors.orange;
-                            } else {
-                              bg = Colors.green;
-                            }
-                            return Container(
-                              margin: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: bg,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                '${day.day}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
                       ),
                 SizedBox(height: 20),
                 Text('Select Table'),
