@@ -41,6 +41,21 @@ class _SignUpPageState extends State<SignUpPage> {
       body: WoodBackground(
         child: Stack(
           children: [
+            // Logo image above the GlassCard
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 48.0),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/circularboardgamec.png',
+                    width: 140,
+                    height: 140,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
             Align(
               alignment: Alignment.bottomCenter,
               child: GlassCard(

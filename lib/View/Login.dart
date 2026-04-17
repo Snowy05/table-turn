@@ -23,12 +23,28 @@ class _LoginPageState extends State<LoginPage> {
       body: WoodBackground(
         child: Stack(
           children: [
+            // Logo image above the GlassCard
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 48.0),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/circularboardgamec.png',
+                    width: 180,
+                    height: 180,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
             Align(
               alignment: Alignment.bottomCenter,
               child: GlassCard(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    const SizedBox(height: 24),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
