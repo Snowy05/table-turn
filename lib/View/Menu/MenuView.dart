@@ -5,6 +5,7 @@ import 'MenuItemCard.dart';
 import 'MenuItemCardOpen.dart';
 import 'package:tableturn_project0/View/Menu/menu_seed_items.dart';
 import '../../Model/Options/menuOptions.dart';
+import '../../Controller/MenuFilterHelper.dart';
 
 class MenuView extends StatefulWidget {
   const MenuView({Key? key}) : super(key: key);
@@ -17,20 +18,8 @@ class _MenuViewState extends State<MenuView> {
   // For secondary tag filtering
   final Set<String> _selectedTags = {};
 
-  List<String> get _availableTags {
-    // Show tags based on main filter
-    if (_selectedFilter == 'Vegetarian') {
-      return dietaryTags;
-    } else if (_selectedFilter == 'Drinks') {
-      return menuTags;
-    } else if (_selectedFilter == 'Food') {
-      return menuTags;
-    } else if (_selectedFilter == 'Dessert') {
-      return menuTags;
-    }
-    // For 'All' or other, show all tags
-    return {...dietaryTags, ...menuTags}.toList();
-  }
+  List<String> get _availableTags =>
+      MenuFilterHelper.availableTags(_selectedFilter);
 
   final List<String> _filters = [
     'All',
@@ -178,41 +167,12 @@ class _MenuViewState extends State<MenuView> {
                 }
                 var items = snapshot.data ?? [];
                 // Main filter logic
-                if (_selectedFilter != 'All') {
-                  if (_selectedFilter == 'Vegetarian') {
-                    items = items
-                        .where(
-                          (item) => item.dietaryTags.contains('Vegetarian' ),
-                        )
-                        .toList();
-                  } else if (_selectedFilter == 'Food') {
-                    items = items
-                        .where((item) => item.category.contains('Food'))
-                        .toList();
-                  } else if (_selectedFilter == 'Drinks') {
-                    items = items
-                        .where((item) => item.category.contains('Drink'))
-                        .toList();
-                  } else if (_selectedFilter == 'Dessert') {
-                    items = items
-                        .where((item) => item.menuTags.contains('Dessert'))
-                        .toList();
-                  } else if (_selectedFilter == 'Sides') {
-                    items = items
-                        .where((item) => item.category.contains('Side'))
-                        .toList();
-                  }
-                }
-                // Secondary tag filter logic (multi-tag, AND logic)
-                if (_selectedTags.isNotEmpty) {
-                  items = items.where((item) {
-                    final allTags = <String>{
-                      ...item.dietaryTags,
-                      ...item.menuTags,
-                    };
-                    return _selectedTags.every((tag) => allTags.contains(tag));
-                  }).toList();
-                }
+                items = MenuFilterHelper.applyMainFilter(
+                  items,
+                  _selectedFilter,
+                );
+                // Secondary tag filter logic
+                items = MenuFilterHelper.applyTagFilter(items, _selectedTags);
                 if (items.isEmpty) {
                   return const Center(child: Text('No menu items found'));
                 }
