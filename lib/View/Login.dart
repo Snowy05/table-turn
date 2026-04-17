@@ -33,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           GlobalTextField(
                             controller: _emailController,
@@ -45,40 +46,106 @@ class _LoginPageState extends State<LoginPage> {
                             labelText: 'Password',
                             obscureText: true,
                           ),
-                          SizedBox(height: 32.0),
+                          SizedBox(height: 24.0),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 32,
+                              right: 32,
+                              top: 12,
+                            ),
+                            child: LoginButton(
+                              text: 'Sign In',
+                              onPressed: () async {
+                                try {
+                                  await AuthService().signIn(
+                                    _emailController.text,
+                                    _passwordController.text,
+                                  );
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/dashboard',
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Login failed: $e')),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 12.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 32, right: 32),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // TODO: Implement forgot password navigation
+                                },
+                                child: Text(
+                                  'Forgot password?',
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    decoration: TextDecoration.underline,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 28.0),
                           Row(
                             children: [
-                              LoginButton(
-                                text: 'Back to Sign Up',
-                                onPressed: () {
+                              Expanded(
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Colors.grey[400],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0,
+                                ),
+                                child: Text(
+                                  'OR',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Colors.grey[400],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 28.0),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Don't have an account? "),
+                              GestureDetector(
+                                onTap: () {
                                   Navigator.pushReplacementNamed(
                                     context,
                                     '/signup',
                                   );
                                 },
-                              ),
-                              SizedBox(width: 16.0),
-                              LoginButton(
-                                text: 'Login',
-                                onPressed: () async {
-                                  try {
-                                    await AuthService().signIn(
-                                      _emailController.text,
-                                      _passwordController.text,
-                                    );
-                                    Navigator.pushReplacementNamed(
+                                child: Text(
+                                  'Sign up here',
+                                  style: TextStyle(
+                                    color: Theme.of(
                                       context,
-                                      '/dashboard',
-                                    );
-                                  } catch (e) {
-                                    // Show error message
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Login failed: $e'),
-                                      ),
-                                    );
-                                  }
-                                },
+                                    ).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
                               ),
                             ],
                           ),

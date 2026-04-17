@@ -28,7 +28,7 @@ class GlobalTextField extends StatelessWidget {
         style: const TextStyle(fontSize: 20, color: Colors.black),
         decoration: InputDecoration(
           labelText: labelText,
-          labelStyle: const TextStyle(color: Colors.grey, fontSize: 20),
+          labelStyle: const TextStyle(color: Colors.grey, fontSize: 15),
           filled: true,
           fillColor: Colors.white,
           contentPadding: const EdgeInsets.symmetric(
