@@ -8,13 +8,14 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isHighContrast =
+        Theme.of(context).colorScheme.primary == Colors.black;
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
         width: size.width,
-        // Remove fixed height for dynamic sizing
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.7),
+          color: isHighContrast ? Colors.black : Colors.white.withOpacity(0.7),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(size.width * 0.1),
             topRight: Radius.circular(size.width * 0.1),

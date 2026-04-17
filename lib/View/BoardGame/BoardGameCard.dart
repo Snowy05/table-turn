@@ -8,10 +8,13 @@ class BoardGameCard extends StatelessWidget {
   @override
   // Custom card widget to display game information in the list
   Widget build(BuildContext context) {
+    final isHighContrast =
+        Theme.of(context).colorScheme.primary == Colors.black;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
+      color: isHighContrast ? Colors.black : null,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

@@ -17,6 +17,8 @@ class WidgetMenubttn extends StatelessWidget {
   //if image asset is provided use it else use icon
   @override
   Widget build(BuildContext context) {
+    final isHighContrast =
+        Theme.of(context).colorScheme.primary == Colors.black;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: InkWell(
@@ -26,6 +28,7 @@ class WidgetMenubttn extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
+          color: isHighContrast ? Colors.black : null,
           child: SizedBox(
             width: double.infinity,
             height: 120,

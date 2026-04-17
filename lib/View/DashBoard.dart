@@ -124,6 +124,13 @@ class DashboardPage extends StatelessWidget {
                       Navigator.pushNamed(context, '/findyourgame');
                     },
                   ),
+                  WidgetMenubttn(
+                    label: 'Settings',
+                    imageAsset: 'assets/images/profileMenu.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/settings');
+                    },
+                  ),
                 ],
               ),
             ),

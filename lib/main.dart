@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/Model/font_size_provider.dart';
+import 'package:tableturn_project0/Model/high_contrast_provider.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGame.dart';
 import 'package:tableturn_project0/View/Booking/BookingPage.dart';
 import 'package:tableturn_project0/View/FindYourGame.dart';
@@ -10,6 +11,7 @@ import 'package:tableturn_project0/View/LoyaltyScheme/LoyaltyPage.dart';
 import 'package:tableturn_project0/View/LoyaltyScheme/QrCodeGenerator.dart';
 import 'package:tableturn_project0/View/Menu/MenuView.dart';
 import 'package:tableturn_project0/View/ProfileView.dart';
+import 'package:tableturn_project0/View/Settings.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'Model/bookingFormModel.dart';
@@ -25,6 +27,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => BookingFormModel()..load()),
         ChangeNotifierProvider(create: (_) => FontSizeProvider()),
+        ChangeNotifierProvider(create: (_) => HighContrastProvider()),
       ],
       child: MyApp(),
     ),
@@ -35,6 +38,103 @@ class MyApp extends StatelessWidget {
   //theme settings, add dark later on
   static const Color primaryColor = Color(0xFF8C3F23);
   static const Color secondaryColor = Color(0xFF593825);
+
+  final ThemeData highContrastTheme = ThemeData(
+    brightness: Brightness.light,
+    colorScheme: const ColorScheme.light(
+      primary: Colors.black,
+      secondary: Colors.yellow,
+      background: Colors.white,
+      surface: Colors.black,
+      onPrimary: Colors.yellow,
+      onSecondary: Colors.black,
+      onBackground: Colors.black,
+      onSurface: Colors.yellow,
+      error: Colors.red,
+      onError: Colors.white,
+    ),
+    scaffoldBackgroundColor: Colors.white,
+    cardTheme: const CardThemeData(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        side: BorderSide(color: Colors.black, width: 2),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(Colors.black),
+        foregroundColor: WidgetStateProperty.all(Colors.yellow),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: Colors.yellow, width: 2),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.yellow, width: 2),
+          ),
+        ),
+        textStyle: WidgetStateProperty.all(
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        elevation: WidgetStateProperty.all(2),
+        padding: WidgetStateProperty.all(
+          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(Colors.black),
+        foregroundColor: WidgetStateProperty.all(Colors.yellow),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: Colors.yellow, width: 2),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.yellow, width: 2),
+          ),
+        ),
+        textStyle: WidgetStateProperty.all(
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        padding: WidgetStateProperty.all(
+          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(Colors.black),
+        foregroundColor: WidgetStateProperty.all(Colors.yellow),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: Colors.yellow, width: 2),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.yellow, width: 2),
+          ),
+        ),
+        textStyle: WidgetStateProperty.all(
+          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        padding: WidgetStateProperty.all(
+          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.yellow,
+      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+      unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+    ),
+  );
 
   final ThemeData lightTheme = ThemeData(
     colorScheme: ColorScheme.light(
@@ -130,10 +230,8 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return Consumer<FontSizeProvider>(
-      //fontsize provider manages the scaling of text across the app, allowing dynamic adjustment of font sizes based on user preferences or accessibility needs. By wrapping the MaterialApp in a Consumer widget
-      // we can listen for changes in the FontSizeProvider and update the text scaling throughout the app 
-      builder: (context, fontSizeProvider, child) {
+    return Consumer2<FontSizeProvider, HighContrastProvider>(
+      builder: (context, fontSizeProvider, highContrastProvider, child) {
         return Builder(
           builder: (context) {
             final mediaQuery = MediaQuery.of(context);
@@ -143,7 +241,9 @@ class MyApp extends StatelessWidget {
               ),
               child: MaterialApp(
                 title: 'TableTurn',
-                theme: lightTheme,
+                theme: highContrastProvider.highContrast
+                    ? highContrastTheme
+                    : lightTheme,
                 home: LoginPage(),
                 routes: {
                   '/signup': (context) => SignUpPage(),
@@ -158,6 +258,7 @@ class MyApp extends StatelessWidget {
                   '/loyalty': (context) => LoyaltyPage(),
                   '/qr': (context) => QrCodeGenerator(),
                   '/findyourgame': (context) => FindYourGameQuiz(),
+                  '/settings': (context) => SettingsPage(),
                 },
               ),
             );
