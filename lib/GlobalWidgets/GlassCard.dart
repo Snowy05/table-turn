@@ -12,7 +12,7 @@ class GlassCard extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Container(
         width: size.width,
-        height: size.height * heightFactor,
+        // Remove fixed height for dynamic sizing
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.7),
           borderRadius: BorderRadius.only(
@@ -29,7 +29,10 @@ class GlassCard extends StatelessWidget {
             ),
           ],
         ),
-        child: child,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 0),
+          child: IntrinsicHeight(child: child),
+        ),
       ),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/AuthService.dart';
 import 'package:tableturn_project0/GlobalWidgets/LoginButton.dart';
 import 'package:tableturn_project0/GlobalWidgets/WoodBackground.dart';
 import 'package:tableturn_project0/GlobalWidgets/GlassCard.dart';
+import 'package:tableturn_project0/GlobalWidgets/GlobalTextField.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,60 +26,66 @@ class _LoginPageState extends State<LoginPage> {
             Align(
               alignment: Alignment.bottomCenter,
               child: GlassCard(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: _emailController,
-                        decoration: InputDecoration(labelText: 'Email'),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      SizedBox(height: 16.0),
-                      TextField(
-                        controller: _passwordController,
-                        decoration: InputDecoration(labelText: 'Password'),
-                        obscureText: true,
-                      ),
-                      SizedBox(height: 32.0),
-                      Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          LoginButton(
-                            text: 'Back to Sign Up',
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(
-                                context,
-                                '/signup',
-                              );
-                            },
+                          GlobalTextField(
+                            controller: _emailController,
+                            labelText: 'Email',
+                            keyboardType: TextInputType.emailAddress,
                           ),
-                          SizedBox(width: 16.0),
-                          LoginButton(
-                            text: 'Login',
-                            onPressed: () async {
-                              try {
-                                UserCredential userCredential =
+                          SizedBox(height: 16.0),
+                          GlobalTextField(
+                            controller: _passwordController,
+                            labelText: 'Password',
+                            obscureText: true,
+                          ),
+                          SizedBox(height: 32.0),
+                          Row(
+                            children: [
+                              LoginButton(
+                                text: 'Back to Sign Up',
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/signup',
+                                  );
+                                },
+                              ),
+                              SizedBox(width: 16.0),
+                              LoginButton(
+                                text: 'Login',
+                                onPressed: () async {
+                                  try {
                                     await AuthService().signIn(
                                       _emailController.text,
                                       _passwordController.text,
                                     );
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  '/dashboard',
-                                );
-                              } catch (e) {
-                                // Show error message
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Login failed: $e')),
-                                );
-                              }
-                            },
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/dashboard',
+                                    );
+                                  } catch (e) {
+                                    // Show error message
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Login failed: $e'),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
