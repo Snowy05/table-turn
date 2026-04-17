@@ -67,14 +67,20 @@ class BoardGameCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '${game.minPlayers}-${game.maxPlayers} players',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 13 * MediaQuery.textScaleFactorOf(context),
+                    color: Colors.grey[700],
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Icon(Icons.timer, size: 18, color: Colors.grey[700]),
                 const SizedBox(width: 4),
                 Text(
                   game.playTimes.isNotEmpty ? game.playTimes.first : '-',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 13 * MediaQuery.textScaleFactorOf(context),
+                    color: Colors.grey[700],
+                  ),
                 ),
               ],
             ),

@@ -59,10 +59,11 @@ class _QRScannerPageState extends State<QRScannerPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              _resultMessage ?? 'Find an easter egg QR code in the Cafe to earn points!',
+              _resultMessage ??
+                  'Find an easter egg QR code in the Cafe to earn points!',
               style: TextStyle(
                 color: _resultMessage != null ? Colors.green : Colors.black54,
-                fontSize: 18,
+                fontSize: 18 * MediaQuery.textScaleFactorOf(context),
               ),
               textAlign: TextAlign.center,
             ),

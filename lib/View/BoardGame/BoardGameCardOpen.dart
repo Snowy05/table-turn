@@ -150,7 +150,9 @@ class BoardGameCardOpen extends StatelessWidget {
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
                       game.tutorial,
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        fontSize: 16 * MediaQuery.textScaleFactorOf(context),
+                      ),
                     ),
                   ),
                 ],

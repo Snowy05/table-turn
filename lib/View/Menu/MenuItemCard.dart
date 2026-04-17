@@ -51,9 +51,9 @@ class MenuItemCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   item.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 16 * MediaQuery.textScaleFactorOf(context),
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,
@@ -62,7 +62,10 @@ class MenuItemCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '£${item.price.toStringAsFixed(2)}',
-                  style: const TextStyle(fontSize: 15, color: Colors.green),
+                  style: TextStyle(
+                    fontSize: 15 * MediaQuery.textScaleFactorOf(context),
+                    color: Colors.green,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],

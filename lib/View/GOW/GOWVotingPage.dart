@@ -157,9 +157,11 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
                           const SizedBox(height: 16),
                           Text(
                             _votedGame!.gameName,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: MediaQuery.textScalerOf(
+                                context,
+                              ).scale(20),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -170,11 +172,11 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
                   const SizedBox(height: 24),
                   //                                                                                           //
                   //Add randomised messages to make it more fun and engaging, instead of just "Vote submitted!"//
-                  //                                                                                           //               
-                  const Text(
+                  //                                                                                           //
+                  Text(
                     'Fingers crossed yours will be the winner',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: MediaQuery.textScalerOf(context).scale(18),
                       color: Colors.brown,
                       fontWeight: FontWeight.w500,
                     ),
@@ -262,9 +264,11 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
                                 const SizedBox(height: 12),
                                 Text(
                                   game.gameName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontSize: MediaQuery.textScalerOf(
+                                      context,
+                                    ).scale(16),
                                   ),
                                   textAlign: TextAlign.center,
                                 ),

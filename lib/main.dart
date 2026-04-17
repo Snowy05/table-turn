@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tableturn_project0/Model/font_size_provider.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGame.dart';
 import 'package:tableturn_project0/View/Booking/BookingPage.dart';
 import 'package:tableturn_project0/View/FindYourGame.dart';
@@ -20,8 +21,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => BookingFormModel()..load(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BookingFormModel()..load()),
+        ChangeNotifierProvider(create: (_) => FontSizeProvider()),
+      ],
       child: MyApp(),
     ),
   );
@@ -126,24 +130,39 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TableTurn',
-      theme: lightTheme,
-      home: LoginPage(),
-      routes: {
-        //  routes for navigation
-        '/signup': (context) => SignUpPage(),
-        '/login': (context) => LoginPage(),
-        '/dashboard': (context) => DashboardPage(),
-        '/boardgames': (context) => BoardGame(),
-        '/profile': (context) => ProfileView(),
-        '/bookings': (context) => BookingPage(),
-        '/menu': (context) => MenuView(),
-        '/gow': (context) => GOWVotingPage(),
-        '/gowresults': (context) => GOWPage(),
-        '/loyalty': (context) => LoyaltyPage(),
-        '/qr': (context) => QrCodeGenerator(),
-        '/findyourgame': (context) => FindYourGameQuiz(),
+    return Consumer<FontSizeProvider>(
+      //fontsize provider manages the scaling of text across the app, allowing dynamic adjustment of font sizes based on user preferences or accessibility needs. By wrapping the MaterialApp in a Consumer widget
+      // we can listen for changes in the FontSizeProvider and update the text scaling throughout the app 
+      builder: (context, fontSizeProvider, child) {
+        return Builder(
+          builder: (context) {
+            final mediaQuery = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQuery.copyWith(
+                textScaler: TextScaler.linear(fontSizeProvider.fontScale),
+              ),
+              child: MaterialApp(
+                title: 'TableTurn',
+                theme: lightTheme,
+                home: LoginPage(),
+                routes: {
+                  '/signup': (context) => SignUpPage(),
+                  '/login': (context) => LoginPage(),
+                  '/dashboard': (context) => DashboardPage(),
+                  '/boardgames': (context) => BoardGame(),
+                  '/profile': (context) => ProfileView(),
+                  '/bookings': (context) => BookingPage(),
+                  '/menu': (context) => MenuView(),
+                  '/gow': (context) => GOWVotingPage(),
+                  '/gowresults': (context) => GOWPage(),
+                  '/loyalty': (context) => LoyaltyPage(),
+                  '/qr': (context) => QrCodeGenerator(),
+                  '/findyourgame': (context) => FindYourGameQuiz(),
+                },
+              ),
+            );
+          },
+        );
       },
     );
   }

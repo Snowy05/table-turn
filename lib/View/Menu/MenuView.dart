@@ -92,7 +92,7 @@ class _MenuViewState extends State<MenuView> {
                         fontWeight: isSelected
                             ? FontWeight.bold
                             : FontWeight.normal,
-                        fontSize: 16,
+                        fontSize: 16 * MediaQuery.textScaleFactorOf(context),
                       ),
                     ),
                   ),

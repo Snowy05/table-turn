@@ -18,6 +18,7 @@ class GlobalTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scale = MediaQuery.textScaleFactorOf(context);
     return Padding(
       padding: const EdgeInsets.only(left: 32, right: 32, top: 12),
       child: TextField(
@@ -25,10 +26,10 @@ class GlobalTextField extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         onChanged: onChanged,
-        style: const TextStyle(fontSize: 20, color: Colors.black),
+        style: TextStyle(fontSize: 20 * scale, color: Colors.black),
         decoration: InputDecoration(
           labelText: labelText,
-          labelStyle: const TextStyle(color: Colors.grey, fontSize: 15),
+          labelStyle: TextStyle(color: Colors.grey, fontSize: 15 * scale),
           filled: true,
           fillColor: Colors.white,
           contentPadding: const EdgeInsets.symmetric(

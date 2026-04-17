@@ -123,7 +123,13 @@ class _ProfileViewState extends State<ProfileView> {
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                       'Name: ${_nameController.text}',
-                                      style: TextStyle(fontSize: 18),
+                                      style: TextStyle(
+                                        fontSize:
+                                            18 *
+                                            MediaQuery.textScaleFactorOf(
+                                              context,
+                                            ),
+                                      ),
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
@@ -187,7 +193,13 @@ class _ProfileViewState extends State<ProfileView> {
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                       'Phone: ${_phoneController.text}',
-                                      style: TextStyle(fontSize: 18),
+                                      style: TextStyle(
+                                        fontSize:
+                                            18 *
+                                            MediaQuery.textScaleFactorOf(
+                                              context,
+                                            ),
+                                      ),
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
@@ -238,7 +250,10 @@ class _ProfileViewState extends State<ProfileView> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Email: ${appUser.email}',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(
+                            fontSize:
+                                18 * MediaQuery.textScaleFactorOf(context),
+                          ),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -246,7 +261,10 @@ class _ProfileViewState extends State<ProfileView> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Favorite Games: ${appUser.favouriteGames.join(', ')}',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(
+                            fontSize:
+                                18 * MediaQuery.textScaleFactorOf(context),
+                          ),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -254,7 +272,10 @@ class _ProfileViewState extends State<ProfileView> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Loyalty Points: ${appUser.loyaltyPoints}',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(
+                            fontSize:
+                                18 * MediaQuery.textScaleFactorOf(context),
+                          ),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -327,7 +348,6 @@ class _ProfileViewState extends State<ProfileView> {
                   Navigator.pushReplacementNamed(context, '/dashboard');
                   break;
                 case 2:
-                
                   break;
                 case 3:
                   Navigator.pushReplacementNamed(context, '/loyalty');

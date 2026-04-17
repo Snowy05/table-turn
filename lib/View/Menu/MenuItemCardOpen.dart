@@ -9,8 +9,8 @@ class MenuItemCardOpen extends StatelessWidget {
     : super(key: key);
 
   @override
-  // This widget is a dialog that shows the details of a menu item, it is opened when the user taps 
-  //on a menu item card, it shows the image, name, description, price, calories, category 
+  // This widget is a dialog that shows the details of a menu item, it is opened when the user taps
+  //on a menu item card, it shows the image, name, description, price, calories, category
   //and tags of the menu item
   //color coded tags, blue for menu tags and green for dietary tags
   Widget build(BuildContext context) {
@@ -55,29 +55,35 @@ class MenuItemCardOpen extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 item.name,
-                style: const TextStyle(
-                  fontSize: 24,
+                style: TextStyle(
+                  fontSize: MediaQuery.textScalerOf(context).scale(24),
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 item.description,
-                style: const TextStyle(fontSize: 16, color: Colors.black87),
+                style: TextStyle(
+                  fontSize: MediaQuery.textScalerOf(context).scale(16),
+                  color: Colors.black87,
+                ),
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
                   Text(
                     '£${item.price.toStringAsFixed(2)}',
-                    style: const TextStyle(fontSize: 20, color: Colors.green),
+                    style: TextStyle(
+                      fontSize: MediaQuery.textScalerOf(context).scale(20),
+                      color: Colors.green,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   if (item.calories.isNotEmpty)
                     Text(
                       '${item.calories} kcal',
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: TextStyle(
+                        fontSize: MediaQuery.textScalerOf(context).scale(16),
                         color: Colors.orange,
                       ),
                     ),

@@ -62,7 +62,10 @@ class _BoardGameState extends State<BoardGame> {
                   },
                   isExpanded: false,
                   underline: Container(height: 2, color: Colors.brown),
-                  style: const TextStyle(fontSize: 16, color: Colors.brown),
+                  style: TextStyle(
+                    fontSize: 16 * MediaQuery.textScaleFactorOf(context),
+                    color: Colors.brown,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 DropdownButton<String>(
@@ -92,7 +95,10 @@ class _BoardGameState extends State<BoardGame> {
                   },
                   isExpanded: false,
                   underline: Container(height: 2, color: Colors.brown),
-                  style: const TextStyle(fontSize: 16, color: Colors.brown),
+                  style: TextStyle(
+                    fontSize: 16 * MediaQuery.textScaleFactorOf(context),
+                    color: Colors.brown,
+                  ),
                 ),
               ],
             ),
