@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'BoardGameCardOpen.dart';
+import '../../Controller/app_localizations.dart';
 
 class Tagbttn extends StatelessWidget {
   final Set<String> selectedTags;
@@ -16,9 +17,44 @@ class Tagbttn extends StatelessWidget {
     this.label = 'Filter by Tags',
   });
 
+  // helper to map tag display names to localization keys
+  String _tagKey(String tag) {
+    switch (tag.toLowerCase()) {
+      case 'new':
+        return 'new';
+      case 'classic':
+        return 'classic';
+      case 'family favorite':
+        return 'familyFavorite';
+      case 'strategy game':
+        return 'strategyGame';
+      case 'party game':
+        return 'partyGame';
+      case 'cooperative game':
+        return 'cooperativeGame';
+      case 'card game':
+        return 'cardGameTag';
+      case 'dice game':
+        return 'diceGameTag';
+      case 'word game':
+        return 'wordGameTag';
+      case 'drawing game':
+        return 'drawingGame';
+      case 'for kids':
+        return 'forKids';
+      case 'long-haul':
+        return 'longHaul';
+      case 'roleplaying game':
+        return 'roleplayingGame';
+      default:
+        return tag;
+    }
+  }
+
   @override
   //custom button that opens a modal bottom sheet with filter options
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return ElevatedButton(
       onPressed: () async {
         final result = await showModalBottomSheet<Set<String>>(
@@ -37,7 +73,7 @@ class Tagbttn extends StatelessWidget {
                           .map<Widget>(
                             (tag) => FilterChip(
                               label: Text(
-                                tag,
+                                localizations?.get(_tagKey(tag)) ?? tag,
                                 style: const TextStyle(color: Colors.white),
                               ),
                               selected: tempSelected.contains(tag),
@@ -75,7 +111,9 @@ class Tagbttn extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context, tempSelected);
                       },
-                      child: const Text('Apply'),
+                      child: Text(
+                        AppLocalizations.of(context)?.get('apply') ?? 'Apply',
+                      ),
                     ),
                   ],
                 ),
@@ -87,7 +125,7 @@ class Tagbttn extends StatelessWidget {
           onApply(result);
         }
       },
-      child: Text(label),
+      child: Text(AppLocalizations.of(context)?.get('filter') ?? label),
     );
   }
 }

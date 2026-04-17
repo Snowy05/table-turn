@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tableturn_project0/Model/font_size_provider.dart';
 import 'package:tableturn_project0/Model/high_contrast_provider.dart';
+import 'Controller/app_localizations.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGame.dart';
 import 'package:tableturn_project0/View/Booking/BookingPage.dart';
 import 'package:tableturn_project0/View/FindYourGame.dart';
@@ -34,7 +36,27 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  static void setLocale(BuildContext context, Locale newLocale) {
+    final _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state?.setLocale(newLocale);
+  }
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale? _locale;
+
+  void setLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
+
   //theme settings, add dark later on
   static const Color primaryColor = Color(0xFF8C3F23);
   static const Color secondaryColor = Color(0xFF593825);
@@ -227,7 +249,6 @@ class MyApp extends StatelessWidget {
     ),
   );
 
-  MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return Consumer2<FontSizeProvider, HighContrastProvider>(
@@ -244,6 +265,7 @@ class MyApp extends StatelessWidget {
                 theme: highContrastProvider.highContrast
                     ? highContrastTheme
                     : lightTheme,
+                locale: _locale,
                 home: LoginPage(),
                 routes: {
                   '/signup': (context) => SignUpPage(),
@@ -259,6 +281,22 @@ class MyApp extends StatelessWidget {
                   '/qr': (context) => QrCodeGenerator(),
                   '/findyourgame': (context) => FindYourGameQuiz(),
                   '/settings': (context) => SettingsPage(),
+                },
+                localizationsDelegates: const [
+                  AppLocalizationsDelegate(),
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [Locale('en'), Locale('es')],
+                localeResolutionCallback: (locale, supportedLocales) {
+                  if (locale == null) return supportedLocales.first;
+                  for (var supported in supportedLocales) {
+                    if (supported.languageCode == locale.languageCode) {
+                      return supported;
+                    }
+                  }
+                  return supportedLocales.first;
                 },
               ),
             );

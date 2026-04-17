@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tableturn_project0/Controller/app_localizations.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -10,18 +11,28 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isHighContrast =
         Theme.of(context).colorScheme.primary == Colors.black;
+    final localizations = AppLocalizations.of(context)!;
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
       backgroundColor: isHighContrast ? Colors.black : null,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Bookings'),
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.card_giftcard),
-          label: 'Loyalty Card',
+          icon: const Icon(Icons.book),
+          label: localizations.get('bookings'),
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.home),
+          label: localizations.get('home'),
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.person),
+          label: localizations.get('profile'),
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.card_giftcard),
+          label: localizations.get('loyalty'),
         ),
       ],
     );

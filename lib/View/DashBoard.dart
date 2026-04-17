@@ -5,6 +5,7 @@ import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 import 'package:tableturn_project0/GlobalWidgets/WidgetMenuBttn.dart';
 import 'package:tableturn_project0/Model/boardgame_samples.dart';
 import 'package:tableturn_project0/Model/userModel.dart';
+import 'package:tableturn_project0/Controller/app_localizations.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -37,8 +38,9 @@ class DashboardPage extends StatelessWidget {
     //     },
     //   ),
     // );
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard')),
+      appBar: AppBar(title: Text(localizations.get('dashboard'))),
 
       // Fetch user data from Firestore and display it in this case name
       // could have used .select() but firebase does not support it yet, so we fetch the whole
@@ -76,56 +78,62 @@ class DashboardPage extends StatelessWidget {
                   SizedBox(height: 20),
                   // debugAddGameButton, // Uncomment this line to show the debug button for adding sample games to Firestore
                   WidgetMenubttn(
-                    label: 'View Board Games',
+                    label:
+                        localizations.get('boardgames') ?? 'View Board Games',
                     imageAsset: 'assets/images/minimalistboardgamed.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/boardgames');
                     },
                   ),
                   WidgetMenubttn(
-                    label: 'Book a Table',
+                    label: localizations.get('bookings') ?? 'Book a Table',
                     imageAsset: 'assets/images/minimalistBook.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/bookings');
                     },
                   ),
                   WidgetMenubttn(
-                    label: 'View Menu',
+                    label: localizations.get('menu') ?? 'View Menu',
                     imageAsset: 'assets/images/minimalistMenuD.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/menu');
                     },
                   ),
                   WidgetMenubttn(
-                    label: 'Vote for Game of the Week',
+                    label:
+                        localizations.get('gameOfWeek') ??
+                        'Vote for Game of the Week',
                     imageAsset: 'assets/images/gow.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/gow');
                     },
                   ),
                   WidgetMenubttn(
-                    label: 'View Game of the Week',
+                    label:
+                        localizations.get('gameOfWeek') ??
+                        'View Game of the Week',
                     imageAsset: 'assets/images/friesMenu.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/gowresults');
                     },
                   ),
                   WidgetMenubttn(
-                    label: 'qr code',
+                    label: localizations.get('qr') ?? 'qr code',
                     imageAsset: 'assets/images/hamburgerMenu.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/qr');
                     },
                   ),
                   WidgetMenubttn(
-                    label: 'Find Your Game',
+                    label:
+                        localizations.get('findYourGame') ?? 'Find Your Game',
                     imageAsset: 'assets/images/questionnaire.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/findyourgame');
                     },
                   ),
                   WidgetMenubttn(
-                    label: 'Settings',
+                    label: localizations.get('settings') ?? 'Settings',
                     imageAsset: 'assets/images/profileMenu.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/settings');
