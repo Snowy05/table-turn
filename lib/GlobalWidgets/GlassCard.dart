@@ -12,27 +12,36 @@ class GlassCard extends StatelessWidget {
         Theme.of(context).colorScheme.primary == Colors.black;
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Container(
-        width: size.width,
-        decoration: BoxDecoration(
-          color: isHighContrast ? Colors.black : Colors.white.withOpacity(0.7),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(size.width * 0.1),
-            topRight: Radius.circular(size.width * 0.1),
-            bottomLeft: const Radius.circular(0),
-            bottomRight: const Radius.circular(0),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      child: AnimatedPadding(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 0),
-          child: IntrinsicHeight(child: child),
+        child: Container(
+          width: size.width,
+          decoration: BoxDecoration(
+            color: isHighContrast
+                ? Colors.black
+                : Colors.white.withOpacity(0.7),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(size.width * 0.1),
+              topRight: Radius.circular(size.width * 0.1),
+              bottomLeft: const Radius.circular(0),
+              bottomRight: const Radius.circular(0),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 0),
+            child: IntrinsicHeight(child: child),
+          ),
         ),
       ),
     );

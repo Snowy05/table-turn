@@ -41,88 +41,84 @@ class _LoginPageState extends State<LoginPage> {
             Align(
               alignment: Alignment.bottomCenter,
               child: GlassCard(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          GlobalTextField(
-                            controller: _emailController,
-                            labelText: 'Email',
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          SizedBox(height: 16.0),
-                          GlobalTextField(
-                            controller: _passwordController,
-                            labelText: 'Password',
-                            obscureText: true,
-                          ),
-                          SizedBox(height: 24.0),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 32,
-                              right: 32,
-                              top: 12,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 24),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            GlobalTextField(
+                              controller: _emailController,
+                              labelText: 'Email',
+                              keyboardType: TextInputType.emailAddress,
                             ),
-                            child: LoginButton(
-                              text: 'Sign In',
-                              onPressed: () async {
-                                try {
-                                  await AuthService().signIn(
-                                    _emailController.text,
-                                    _passwordController.text,
-                                  );
-                                  Navigator.pushReplacementNamed(
-                                    context,
-                                    '/dashboard',
-                                  );
-                                } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Login failed: $e')),
-                                  );
-                                }
-                              },
+                            SizedBox(height: 16.0),
+                            GlobalTextField(
+                              controller: _passwordController,
+                              labelText: 'Password',
+                              obscureText: true,
                             ),
-                          ),
-                          SizedBox(height: 12.0),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 32, right: 32),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: GestureDetector(
-                                onTap: () {
-                                  // TODO: Implement forgot password navigation
-                                },
-                                child: Text(
-                                  'Forgot password?',
-                                  style: TextStyle(
-                                    color: Theme.of(
+                            SizedBox(height: 24.0),
+                            Center(
+                              child: LoginButton(
+                                text: 'Sign In',
+                                onPressed: () async {
+                                  try {
+                                    await AuthService().signIn(
+                                      _emailController.text,
+                                      _passwordController.text,
+                                    );
+                                    Navigator.pushReplacementNamed(
                                       context,
-                                    ).colorScheme.primary,
-                                    decoration: TextDecoration.underline,
-                                    fontWeight: FontWeight.w500,
+                                      '/dashboard',
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Login failed: $e')),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 12.0),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 32, right: 32),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // TODO: Implement forgot password navigation
+                                  },
+                                  child: Text(
+                                    'Forgot password?',
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 28.0),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Divider(
-                                  thickness: 1,
-                                  color: Colors.grey[400],
+                            SizedBox(height: 28.0),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    thickness: 1,
+                                    color: Colors.grey[400],
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0,
                                 ),
                                 child: Text(
                                   'OR',
@@ -172,6 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+            )
           ],
         ),
       ),
