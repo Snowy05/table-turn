@@ -12,14 +12,17 @@ class RewardWidget extends StatelessWidget {
     this.onBuy,
     this.isDisabled = false,
   }) : super(key: key);
-// wisget for reward item
+  // wisget for reward item
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1,
       child: Card(
         elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Colors.black, width: 1),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(

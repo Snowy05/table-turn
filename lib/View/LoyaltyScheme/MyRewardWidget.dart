@@ -7,15 +7,18 @@ class MyRewardWidget extends StatelessWidget {
 
   const MyRewardWidget({Key? key, required this.item, this.onOpen})
     : super(key: key);
-// widget for reward item in the my rewards section, shows the reward item with an 
-//open button to see details
+  // widget for reward item in the my rewards section, shows the reward item with an
+  //open button to see details
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1,
       child: Card(
         elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Colors.black, width: 1),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(

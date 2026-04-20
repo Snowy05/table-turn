@@ -23,19 +23,7 @@ class _BoardGameState extends State<BoardGame> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Board Games')),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/mainbackground.png',
-              fit: BoxFit.cover,
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-              color: Colors.white.withOpacity(0.40), // opacity for readability, change 
-            ),
-          ),
+      body:
           Column(
             children: [
               Padding(
@@ -171,8 +159,6 @@ class _BoardGameState extends State<BoardGame> {
               ),
             ],
           ),
-        ],
-      ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 1,
         onTap: (index) {

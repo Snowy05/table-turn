@@ -18,6 +18,7 @@ class MenuItemCard extends StatelessWidget {
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.black, width: 1),
           ),
           elevation: 4,
           child: Padding(

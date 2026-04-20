@@ -15,7 +15,10 @@ class MenuItemCardOpen extends StatelessWidget {
   //color coded tags, blue for menu tags and green for dietary tags
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Colors.black, width: 1),
+      ),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

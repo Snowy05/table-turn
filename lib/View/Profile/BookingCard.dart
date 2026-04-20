@@ -32,7 +32,10 @@ class BookingCard extends StatelessWidget {
     final bool isActive = booking.bookingEndTime.isAfter(DateTime.now());
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Colors.black, width: 2),
+      ),
       elevation: 3,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),

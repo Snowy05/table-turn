@@ -27,6 +27,7 @@ class WidgetMenubttn extends StatelessWidget {
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Colors.black, width: 1),
           ),
           color: isHighContrast ? Colors.black : null,
           child: SizedBox(

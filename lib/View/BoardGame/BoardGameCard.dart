@@ -12,7 +12,10 @@ class BoardGameCard extends StatelessWidget {
         Theme.of(context).colorScheme.primary == Colors.black;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Colors.black, width: 1),
+      ),
       elevation: 4,
       color: isHighContrast ? Colors.black : null,
       child: Padding(
