@@ -40,7 +40,19 @@ class DashboardPage extends StatelessWidget {
     // );
     final localizations = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(localizations.get('dashboard'))),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.logout, color: Colors.red),
+          tooltip: 'Log out',
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            if (context.mounted) {
+              Navigator.pushReplacementNamed(context, '/login');
+            }
+          },
+        ),
+        title: Text(localizations.get('dashboard')),
+      ),
 
       // Fetch user data from Firestore and display it in this case name
       // could have used .select() but firebase does not support it yet, so we fetch the whole
@@ -139,6 +151,14 @@ class DashboardPage extends StatelessWidget {
                       Navigator.pushNamed(context, '/settings');
                     },
                   ),
+                  WidgetMenubttn(
+                    label: localizations.get('mybookings') ?? 'My Bookings',
+                    imageAsset: 'assets/images/profileMenu.png',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/mybookings');
+                    },
+                  ),
+                  
                 ],
               ),
             ),

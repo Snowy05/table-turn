@@ -25,24 +25,24 @@ class BookingModel {
     required this.createdAt,
   }) : assert(userId.isNotEmpty, 'userId cannot be empty'),
        assert(tableId.isNotEmpty, 'tableId cannot be empty'),
-       assert(boardGameId.isNotEmpty, 'boardGameId cannot be empty'),
        assert(
          bookingStartTime.isBefore(bookingEndTime),
          'bookingStartTime must be before bookingEndTime',
        ),
        assert(numberOfPeople > 0, 'numberOfPeople must be greater than 0'),
        assert(
-        // for future, right now we wont use the status field 
+         // for future, right now we wont use the status field
          status == 'pending' || status == 'confirmed' || status == 'cancelled',
          'status must be one of: pending, confirmed, cancelled',
        );
 
   factory BookingModel.fromMap(Map<String, dynamic> data, String documentId) {
+    final boardGameId = (data['boardGameId'] ?? '').toString();
     return BookingModel(
       uid: documentId,
       userId: data['userId'] ?? '',
       tableId: data['tableId'] ?? '',
-      boardGameId: data['boardGameId'] ?? 'No boardgame',
+      boardGameId: boardGameId.isEmpty ? 'No boardgame' : boardGameId,
       bookingStartTime: (data['bookingStartTime'] as Timestamp).toDate(),
       bookingEndTime: (data['bookingEndTime'] as Timestamp).toDate(),
       numberOfPeople: data['numberOfPeople'] ?? 1,

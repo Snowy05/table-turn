@@ -8,7 +8,8 @@ import 'package:tableturn_project0/Model/userModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 
-import 'package:tableturn_project0/View/Profile/ProfileCard.dart' show ProfileCard;
+import 'package:tableturn_project0/View/Profile/ProfileCard.dart'
+    show ProfileCard;
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});

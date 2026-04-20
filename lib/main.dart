@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tableturn_project0/Model/font_size_provider.dart';
 import 'package:tableturn_project0/Model/high_contrast_provider.dart';
+import 'package:tableturn_project0/View/Profile/MyBookings.dart';
 import 'Controller/app_localizations.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGame.dart';
 import 'package:tableturn_project0/View/Booking/BookingPage.dart';
@@ -281,6 +282,7 @@ class _MyAppState extends State<MyApp> {
                   '/qr': (context) => QrCodeGenerator(),
                   '/findyourgame': (context) => FindYourGameQuiz(),
                   '/settings': (context) => SettingsPage(),
+                  '/mybookings': (context) => MyBookings(),
                 },
                 localizationsDelegates: const [
                   AppLocalizationsDelegate(),
