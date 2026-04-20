@@ -49,7 +49,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Align(
                   alignment: Alignment.topCenter,
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 48.0),
+                    padding: const EdgeInsets.only(top: 60.0),
                     child: ClipOval(
                       child: Image.asset(
                         'assets/images/circularboardgamec.png',

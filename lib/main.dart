@@ -12,7 +12,7 @@ import 'package:tableturn_project0/View/GOW/GOWVotingPage.dart';
 import 'package:tableturn_project0/View/LoyaltyScheme/LoyaltyPage.dart';
 import 'package:tableturn_project0/View/LoyaltyScheme/QrCodeGenerator.dart';
 import 'package:tableturn_project0/View/Menu/MenuView.dart';
-import 'package:tableturn_project0/View/ProfileView.dart';
+import 'package:tableturn_project0/View/Profile/ProfileView.dart';
 import 'package:tableturn_project0/View/Settings.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
