@@ -152,7 +152,7 @@ class DashboardPage extends StatelessWidget {
                     },
                   ),
                   WidgetMenubttn(
-                    label: localizations.get('mybookings') ?? 'My Bookings',
+                    label: localizations.get('mybookins') ?? 'My Bookings',
                     imageAsset: 'assets/images/profileMenu.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/mybookings');

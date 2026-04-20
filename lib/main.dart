@@ -164,6 +164,11 @@ class _MyAppState extends State<MyApp> {
       primary: primaryColor,
       secondary: secondaryColor,
     ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: secondaryColor,
+      foregroundColor: Colors.white, 
+      elevation: 1,
+    ),
     cardTheme: CardThemeData(
       color: Colors.brown[110],
       shape: RoundedRectangleBorder(
