@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
-import 'package:tableturn_project0/GlobalWidgets/WidgetMenuBttn.dart';
-import 'package:tableturn_project0/Model/boardgame_samples.dart';
+import 'package:tableturn_project0/GlobalWidgets/DashLongButton.dart';
+import 'package:tableturn_project0/GlobalWidgets/DashRectangleButton.dart';
+import 'package:tableturn_project0/GlobalWidgets/DashSquareButton.dart';
+
 import 'package:tableturn_project0/Model/userModel.dart';
 import 'package:tableturn_project0/Controller/app_localizations.dart';
 
@@ -86,79 +88,124 @@ class DashboardPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Center(child: Text('Welcome, ${appUser.name}!')),
-                  SizedBox(height: 20),
-                  // debugAddGameButton, // Uncomment this line to show the debug button for adding sample games to Firestore
-                  WidgetMenubttn(
-                    label:
-                        localizations.get('boardgames') ?? 'View Board Games',
-                    imageAsset: 'assets/images/minimalistboardgamed.png',
+                  // Center(child: Text('Welcome, ${appUser.name}!')),
+                  const SizedBox(height: 20),
+
+                  // Rectangle: Boardgames
+                  DashLongButton(
+                    label: localizations.get('boardgames'),
+                    imageAsset: 'assets/images/boardgameCard.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/boardgames');
                     },
+                    size: 120,
+                    height: 250,
                   ),
-                  WidgetMenubttn(
-                    label: localizations.get('bookings') ?? 'Book a Table',
-                    imageAsset: 'assets/images/minimalistBook.png',
+                  const SizedBox(height: 16),
+
+                  // Square: Menu, Find Your Game (same as other rows)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: DashLongButton(
+                          label: localizations.get('menu'),
+                          imageAsset: 'assets/images/menu.png',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/menu');
+                          },
+                          size: 160,
+                          height: 260,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: DashLongButton(
+                          label: localizations.get('findYourGame'),
+                          imageAsset: 'assets/images/questionnaire.png',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/findyourgame');
+                          },
+                          size: 160,
+                          height: 260,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Rectangle: Book
+                  DashLongButton(
+                    label: localizations.get('bookNow'),
+                    imageAsset: 'assets/images/booknow.png',
                     onTap: () {
                       Navigator.pushNamed(context, '/bookings');
                     },
+                    size: 120,
+                    height: 250,
                   ),
-                  WidgetMenubttn(
-                    label: localizations.get('menu') ?? 'View Menu',
-                    imageAsset: 'assets/images/minimalistMenuD.png',
-                    onTap: () {
-                      Navigator.pushNamed(context, '/menu');
-                    },
+                  const SizedBox(height: 16),
+
+                  // Square: Settings, My bookings
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: DashLongButton(
+                          label: localizations.get('settings'),
+                          imageAsset: 'assets/images/settings.png',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/settings');
+                          },
+                          size: 160,
+                          height: 260,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: DashLongButton(
+                          label: localizations.get('mybookings'),
+                          imageAsset: 'assets/images/mybooking.png',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/mybookings');
+                          },
+                          size: 160,
+                          height: 260,
+                        ),
+                      ),
+                    ],
                   ),
-                  WidgetMenubttn(
-                    label:
-                        localizations.get('gameOfWeek') ??
-                        'Vote for Game of the Week',
-                    imageAsset: 'assets/images/gow.png',
-                    onTap: () {
-                      Navigator.pushNamed(context, '/gow');
-                    },
+                  const SizedBox(height: 16),
+
+                  // Square: gow vote, gow
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: DashLongButton(
+                          label: localizations.get('votegow'),
+                          imageAsset: 'assets/images/vote.png',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/gow');
+                          },
+                          size: 160,
+                          height: 260,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: DashLongButton(
+                          label: localizations.get('gameOfWeek'),
+                          imageAsset: 'assets/images/gameoftheweek.png',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/gowresults');
+                          },
+                          size: 160,
+                          height: 260,
+                        ),
+                      ),
+                    ],
                   ),
-                  WidgetMenubttn(
-                    label:
-                        localizations.get('gameOfWeek') ??
-                        'View Game of the Week',
-                    imageAsset: 'assets/images/friesMenu.png',
-                    onTap: () {
-                      Navigator.pushNamed(context, '/gowresults');
-                    },
-                  ),
-                  WidgetMenubttn(
-                    label: localizations.get('qr') ?? 'qr code',
-                    imageAsset: 'assets/images/hamburgerMenu.png',
-                    onTap: () {
-                      Navigator.pushNamed(context, '/qr');
-                    },
-                  ),
-                  WidgetMenubttn(
-                    label:
-                        localizations.get('findYourGame') ?? 'Find Your Game',
-                    imageAsset: 'assets/images/questionnaire.png',
-                    onTap: () {
-                      Navigator.pushNamed(context, '/findyourgame');
-                    },
-                  ),
-                  WidgetMenubttn(
-                    label: localizations.get('settings') ?? 'Settings',
-                    imageAsset: 'assets/images/profileMenu.png',
-                    onTap: () {
-                      Navigator.pushNamed(context, '/settings');
-                    },
-                  ),
-                  WidgetMenubttn(
-                    label: localizations.get('mybookins') ?? 'My Bookings',
-                    imageAsset: 'assets/images/profileMenu.png',
-                    onTap: () {
-                      Navigator.pushNamed(context, '/mybookings');
-                    },
-                  ),
-                  
                 ],
               ),
             ),

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 // custtom card button for the dashboard
-class WidgetMenubttn extends StatelessWidget {
+class DashRectangleButton extends StatelessWidget {
   final String label;
   final IconData? icon;
   final String? imageAsset;
   final VoidCallback onTap;
 
-  const WidgetMenubttn({
+  const DashRectangleButton({
     super.key,
     required this.label,
     this.icon,
