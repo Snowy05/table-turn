@@ -7,13 +7,46 @@ class SlotPickerModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: slots.map((slot) {
-        return ListTile(
-          title: Text(slot),
-          onTap: () => Navigator.pop(context, slot),
-        );
-      }).toList(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Select a Time Slot',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 24),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: slots.map((slot) {
+              return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.brown,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onPressed: () => Navigator.pop(context, slot),
+                child: Text(slot),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 }

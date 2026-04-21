@@ -13,7 +13,7 @@ class AppTheme {
       elevation: 1,
     ),
     cardTheme: CardThemeData(
-      color: const Color(0xFFE9E5D8),
+      color: const Color.fromARGB(255, 233, 233, 230),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         side: const BorderSide(color: Colors.black, width: 2),

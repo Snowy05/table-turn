@@ -66,44 +66,56 @@ class _GOWPageState extends State<GOWPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Game of the Week')),
-      body: FutureBuilder<Map<String, dynamic>?>(
-        future: _winnerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Center(
-              child: Text(
-                'No Game of the Week selected yet.',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.red),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [              Color(0xFFF9D46A),
+
+              Color(0xFFFFFFFF),
+            ],
+          ),
+        ),
+        child: FutureBuilder<Map<String, dynamic>?>(
+          future: _winnerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (!snapshot.hasData || snapshot.data == null) {
+              return Center(
+                child: Text(
+                  'No Game of the Week selected yet.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
+            final game = snapshot.data!['game'] as GameModel;
+            final votes = snapshot.data!['votes'] as int;
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  BoardGameCard(game: game),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Votes this week: $votes',
+                    style: TextStyle(
+                      fontSize: 18 * MediaQuery.textScaleFactorOf(context),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             );
-          }
-          final game = snapshot.data!['game'] as GameModel;
-          final votes = snapshot.data!['votes'] as int;
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                BoardGameCard(game: game),
-                const SizedBox(height: 24),
-                Text(
-                  'Votes this week: $votes',
-                  style: TextStyle(
-                    fontSize: 18 * MediaQuery.textScaleFactorOf(context),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

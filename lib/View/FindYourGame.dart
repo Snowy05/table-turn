@@ -57,48 +57,60 @@ class _FindYourGameQuizState extends State<FindYourGameQuiz> {
     if (_recommendations != null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Your Game Matches')),
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : _recommendations!.isEmpty
-            ? const Center(child: Text('No games matched your answers.'))
-            : ListView.builder(
-                itemCount: _recommendations!.length,
-                // convert BoardGame to GameModel for card widgets
-                itemBuilder: (context, idx) {
-                  final boardGame = _recommendations![idx];
-                  // Convert BoardGame to GameModel for card widgets
-                  final game = GameModel(
-                    uid: '',
-                    gameName: boardGame.name,
-                    minPlayers: boardGame.minPlayers,
-                    maxPlayers: boardGame.maxPlayers,
-                    description: boardGame.description,
-                    imageAsset: boardGame.imageAsset,
-                    imageUrl: '',
-                    ageGroups: [],
-                    complexity: '',
-                    playTimes: boardGame.playTimes,
-                    tags: boardGame.tags,
-                    tutorial: boardGame is dynamic && boardGame.tutorial != null
-                        ? boardGame.tutorial
-                        : '',
-                    isAvailable: true,
-                    isAvailableForBooking: true,
-                    availabilityStatus: 'Available',
-                    quantityInStock: 1,
-                  );
-                  return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) =>
-                            Dialog(child: BoardGameCardOpen(game: game)),
-                      );
-                    },
-                    child: BoardGameCard(game: game),
-                  );
-                },
-              ),
+        body: Container(
+          decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFFFFFFF), 
+                        Color(0xFFFFE8DC), 
+          ],
+        ),
+      ),
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : _recommendations!.isEmpty
+              ? const Center(child: Text('No games matched your answers.'))
+              : ListView.builder(
+                  itemCount: _recommendations!.length,
+                  // convert BoardGame to GameModel for card widgets
+                  itemBuilder: (context, idx) {
+                    final boardGame = _recommendations![idx];
+                    // Convert BoardGame to GameModel for card widgets
+                    final game = GameModel(
+                      uid: '',
+                      gameName: boardGame.name,
+                      minPlayers: boardGame.minPlayers,
+                      maxPlayers: boardGame.maxPlayers,
+                      description: boardGame.description,
+                      imageAsset: boardGame.imageAsset,
+                      imageUrl: '',
+                      ageGroups: [],
+                      complexity: '',
+                      playTimes: boardGame.playTimes,
+                      tags: boardGame.tags,
+                      tutorial: boardGame is dynamic && boardGame.tutorial != null
+                          ? boardGame.tutorial
+                          : '',
+                      isAvailable: true,
+                      isAvailableForBooking: true,
+                      availabilityStatus: 'Available',
+                      quantityInStock: 1,
+                    );
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) =>
+                              Dialog(child: BoardGameCardOpen(game: game)),
+                        );
+                      },
+                      child: BoardGameCard(game: game),
+                    );
+                  },
+                ),
+        ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             setState(() {
@@ -113,6 +125,7 @@ class _FindYourGameQuizState extends State<FindYourGameQuiz> {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFFE8DC),
       appBar: AppBar(title: const Text('Find Your Game')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())

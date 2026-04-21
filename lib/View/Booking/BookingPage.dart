@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tableturn_project0/Model/gameModel.dart';
 import 'package:provider/provider.dart';
 import 'package:tableturn_project0/Model/bookingFormModel.dart';
+import 'package:tableturn_project0/View/Booking/BookingButton.dart';
 import 'package:tableturn_project0/View/Booking/SlotPickerModal.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 
@@ -23,6 +24,32 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
+  Widget _stepperControlsBuilder(
+    BuildContext context,
+    ControlsDetails details,
+  ) {
+    return Row(
+      children: [
+        Expanded(
+          child: BookingButton(
+            label: _currentStep == 3 ? 'Finish' : 'Continue',
+            onPressed: details.onStepContinue ?? () {},
+          ),
+        ),
+        const SizedBox(width: 12),
+        if (_currentStep > 0)
+          Expanded(
+            child: BookingButton(
+              label: 'Cancel',
+              onPressed: details.onStepCancel ?? () {},
+              color: Colors.grey,
+              textStyle: const TextStyle(color: Colors.white),
+            ),
+          ),
+      ],
+    );
+  }
+
   int _currentStep = 0;
   Map<DateTime, double> _fullnessByDay = {};
   bool _loadingFullness = false;
@@ -192,207 +219,243 @@ class _BookingPageState extends State<BookingPage> {
     final bookingForm = Provider.of<BookingFormModel>(context);
     return Scaffold(
       appBar: AppBar(title: Text('Booking Page')),
-      body: Stepper(
-        type: StepperType.horizontal,
-        currentStep: _currentStep,
-        onStepContinue: () {
-          if (_currentStep < 3) {
-            setState(() => _currentStep++);
-          } else {
-            _submitBooking(context);
-          }
-        },
-        onStepCancel: () {
-          if (_currentStep > 0) {
-            setState(() => _currentStep--);
-          }
-        },
-        steps: [
-          Step(
-            title: Text(''),
-            isActive: _currentStep >= 0,
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _loadingFullness
-                    ? Center(child: CircularProgressIndicator())
-                    : Builder(
-                        builder: (context) {
-                          final firstDay = DateTime.now();
-                          final lastDay = DateTime.now().add(
-                            Duration(days: 14),
-                          );
-                          DateTime focusedDay =
-                              bookingForm.selectedDate ?? DateTime.now();
-                          if (focusedDay.isBefore(firstDay))
-                            focusedDay = firstDay;
-                          return TableCalendar(
-                            firstDay: firstDay,
-                            lastDay: lastDay,
-                            focusedDay: focusedDay,
-                            headerStyle: HeaderStyle(
-                              formatButtonVisible: false,
-                              titleCentered: true,
-                            ),
-                            calendarFormat: CalendarFormat.twoWeeks,
-                            availableCalendarFormats: const {
-                              CalendarFormat.twoWeeks: 'Two Weeks',
-                            },
-                            onDaySelected: (selectedDay, newFocusedDay) {
-                              bookingForm.setSelectedDate(selectedDay);
-                            },
-                            selectedDayPredicate: (day) =>
-                                isSameDay(day, bookingForm.selectedDate),
-                            calendarBuilders: CalendarBuilders(
-                              defaultBuilder: (context, day, focusedDay) {
-                                final key = DateTime(
-                                  day.year,
-                                  day.month,
-                                  day.day,
-                                );
-                                final fullness = _fullnessByDay[key] ?? 0.0;
-                                Color bg;
-                                if (fullness >= 0.8) {
-                                  bg = Colors.red;
-                                } else if (fullness >= 0.5) {
-                                  bg = Colors.orange;
-                                } else {
-                                  bg = Colors.green;
-                                }
-                                return Container(
-                                  margin: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: bg,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    '${day.day}',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                SizedBox(height: 20),
-                Text('Select Table'),
-                DropdownButton<String>(
-                  value: bookingForm.selectedTable,
-                  hint: Text('Choose Table'),
-                  items: ['table1', 'table2', 'table3', 'table4', 'table5']
-                      .map(
-                        (table) =>
-                            DropdownMenuItem(value: table, child: Text(table)),
-                      )
-                      .toList(),
-                  onChanged: (val) => bookingForm.setSelectedTable(val),
-                ),
-                SizedBox(height: 20),
-                Text('Select Time Slot'),
-                ElevatedButton(
-                  onPressed: () {
-                    _showSlotPicker(context);
-                  },
-                  child: Text(bookingForm.selectedSlot ?? 'Slot'),
-                ),
-              ],
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFFFFF), Color(0xFFFFE8DC)],
           ),
-          Step(
-            title: Text(''),
-            isActive: _currentStep >= 1,
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Duration (hours)'),
-                DropdownButton<int>(
-                  value: bookingForm.duration,
-                  items: [1, 2, 3, 4, 5]
-                      .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
-                      .toList(),
-                  onChanged: (val) {
-                    if (val != null) bookingForm.setDuration(val);
-                  },
+        ),
+        child: Stepper(
+          type: StepperType.horizontal,
+          currentStep: _currentStep,
+          onStepContinue: () {
+            if (_currentStep < 3) {
+              setState(() => _currentStep++);
+            } else {
+              _submitBooking(context);
+            }
+          },
+          onStepCancel: () {
+            if (_currentStep > 0) {
+              setState(() => _currentStep--);
+            }
+          },
+          controlsBuilder: _stepperControlsBuilder,
+          steps: [
+            Step(
+              title: Text(''),
+              isActive: _currentStep >= 0,
+              content: Container(
+                alignment: Alignment.center,
+                constraints: BoxConstraints(maxWidth: 400),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _loadingFullness
+                        ? Center(child: CircularProgressIndicator())
+                        : Builder(
+                            builder: (context) {
+                              final firstDay = DateTime.now();
+                              final lastDay = DateTime.now().add(
+                                Duration(days: 14),
+                              );
+                              DateTime focusedDay =
+                                  bookingForm.selectedDate ?? DateTime.now();
+                              if (focusedDay.isBefore(firstDay))
+                                focusedDay = firstDay;
+                              return TableCalendar(
+                                firstDay: firstDay,
+                                lastDay: lastDay,
+                                focusedDay: focusedDay,
+                                headerStyle: HeaderStyle(
+                                  formatButtonVisible: false,
+                                  titleCentered: true,
+                                ),
+                                calendarFormat: CalendarFormat.twoWeeks,
+                                availableCalendarFormats: const {
+                                  CalendarFormat.twoWeeks: 'Two Weeks',
+                                },
+                                onDaySelected: (selectedDay, newFocusedDay) {
+                                  bookingForm.setSelectedDate(selectedDay);
+                                },
+                                selectedDayPredicate: (day) =>
+                                    isSameDay(day, bookingForm.selectedDate),
+                                calendarBuilders: CalendarBuilders(
+                                  defaultBuilder: (context, day, focusedDay) {
+                                    final key = DateTime(
+                                      day.year,
+                                      day.month,
+                                      day.day,
+                                    );
+                                    final fullness = _fullnessByDay[key] ?? 0.0;
+                                    Color bg;
+                                    if (fullness >= 0.8) {
+                                      bg = Colors.red;
+                                    } else if (fullness >= 0.5) {
+                                      bg = Colors.orange;
+                                    } else {
+                                      bg = Colors.green;
+                                    }
+                                    return Container(
+                                      margin: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: bg,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '${day.day}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                    SizedBox(height: 32),
+                    Text('Select Table'),
+                    SizedBox(height: 12),
+                    DropdownButton<String>(
+                      value: bookingForm.selectedTable,
+                      hint: Text('Choose Table'),
+                      items: ['table1', 'table2', 'table3', 'table4', 'table5']
+                          .map((table) {
+                            final tableNumber = table.replaceAll('table', '');
+                            return DropdownMenuItem(
+                              value: table,
+                              child: Text('Table $tableNumber'),
+                            );
+                          })
+                          .toList(),
+                      onChanged: (val) => bookingForm.setSelectedTable(val),
+                    ),
+                    SizedBox(height: 32),
+                    Text('Select Time Slot'),
+                    SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        _showSlotPicker(context);
+                      },
+                      child: Text(bookingForm.selectedSlot ?? 'Slot'),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 10),
-                Text('Number of Guests'),
-                DropdownButton<int>(
-                  value: bookingForm.guests,
-                  items: List.generate(12, (i) => i + 1)
-                      .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
-                      .toList(),
-                  onChanged: (val) {
-                    if (val != null) bookingForm.setGuests(val);
-                  },
-                ),
-              ],
+              ),
             ),
-          ),
-          Step(
-            title: Text(''),
-            isActive: _currentStep >= 2,
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Boardgame (optional)'),
-                _loadingBoardgames
-                    ? CircularProgressIndicator()
-                    : DropdownButton<String>(
-                        value: bookingForm.selectedBoardgame ?? 'None',
-                        hint: Text('Choose Boardgame'),
-                        items: [
-                          DropdownMenuItem(value: 'None', child: Text('None')),
-                          ..._availableBoardgames.map(
-                            (game) => DropdownMenuItem(
-                              value: game.uid,
-                              child: Text(
-                                '${game.gameName} (${game.quantityInStock})',
+            Step(
+              title: Text(''),
+              isActive: _currentStep >= 1,
+              content: Container(
+                alignment: Alignment.center,
+                constraints: BoxConstraints(maxWidth: 400),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Duration (hours)'),
+                    DropdownButton<int>(
+                      value: bookingForm.duration,
+                      items: [1, 2, 3, 4, 5]
+                          .map(
+                            (e) =>
+                                DropdownMenuItem(value: e, child: Text('$e')),
+                          )
+                          .toList(),
+                      onChanged: (val) {
+                        if (val != null) bookingForm.setDuration(val);
+                      },
+                    ),
+                    SizedBox(height: 24),
+                    Text('Number of Guests'),
+                    SizedBox(height: 12),
+                    DropdownButton<int>(
+                      value: bookingForm.guests,
+                      items: List.generate(12, (i) => i + 1)
+                          .map(
+                            (e) =>
+                                DropdownMenuItem(value: e, child: Text('$e')),
+                          )
+                          .toList(),
+                      onChanged: (val) {
+                        if (val != null) bookingForm.setGuests(val);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Step(
+              title: Text(''),
+              isActive: _currentStep >= 2,
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Boardgame (optional)'),
+                  _loadingBoardgames
+                      ? CircularProgressIndicator()
+                      : DropdownButton<String>(
+                          value: bookingForm.selectedBoardgame ?? 'None',
+                          hint: Text('Choose Boardgame'),
+                          items: [
+                            DropdownMenuItem(
+                              value: 'None',
+                              child: Text('None'),
+                            ),
+                            ..._availableBoardgames.map(
+                              (game) => DropdownMenuItem(
+                                value: game.uid,
+                                child: Text(
+                                  '${game.gameName} (${game.quantityInStock})',
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                        onChanged: (val) =>
-                            bookingForm.setSelectedBoardgame(val),
-                      ),
-                SizedBox(height: 16),
-                Text('Special Requests'),
-                TextField(
-                  controller: _specialRequestsController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Any special requests?',
+                          ],
+                          onChanged: (val) =>
+                              bookingForm.setSelectedBoardgame(val),
+                        ),
+                  SizedBox(height: 32),
+                  Text('Special Requests'),
+                  SizedBox(height: 12),
+                  TextField(
+                    controller: _specialRequestsController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Any special requests?',
+                    ),
+                    maxLines: 2,
                   ),
-                  maxLines: 2,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Step(
-            title: Text(''),
-            isActive: _currentStep >= 3,
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Mock Payment Step'),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    _submitBooking(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Mock payment successful!')),
-                    );
-                  },
-                  child: Text('Pay & Book Now'),
+            Step(
+              title: Text(''),
+              isActive: _currentStep >= 3,
+              content: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: () {
+                        _submitBooking(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Mock payment successful!')),
+                        );
+                      },
+                      child: Text('Pay & Book Now'),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
