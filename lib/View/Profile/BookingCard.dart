@@ -6,8 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class BookingCard extends StatelessWidget {
   final BookingModel booking;
   final VoidCallback? onTap;
-  const BookingCard({Key? key, required this.booking, this.onTap})
-    : super(key: key);
+  final VoidCallback? onDelete;
+  const BookingCard({
+    Key? key,
+    required this.booking,
+    this.onTap,
+    this.onDelete,
+  }) : super(key: key);
 
   Future<String> _fetchBoardGameName(String boardGameId) async {
     if (boardGameId == 'No boardgame' || boardGameId.isEmpty) return '-';
@@ -31,6 +36,7 @@ class BookingCard extends StatelessWidget {
     final int guests = booking.numberOfPeople;
     final bool isActive = booking.bookingEndTime.isAfter(DateTime.now());
     return Card(
+      color: Colors.grey[50], // much lighter background
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -44,6 +50,7 @@ class BookingCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
           width: double.infinity,
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
                 Icons.event,
@@ -81,22 +88,34 @@ class BookingCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: isActive ? Colors.green[100] : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  isActive ? 'Active' : 'Expired',
-                  style: TextStyle(
-                    color: isActive ? Colors.green[800] : Colors.grey[700],
-                    fontWeight: FontWeight.bold,
+              Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? Colors.green[50]
+                          : Colors.grey[100], // lighter badge
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      isActive ? 'Active' : 'Expired',
+                      style: TextStyle(
+                        color: isActive ? Colors.green[800] : Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    tooltip: 'Delete booking',
+                    onPressed: onDelete,
+                  ),
+                ],
               ),
             ],
           ),

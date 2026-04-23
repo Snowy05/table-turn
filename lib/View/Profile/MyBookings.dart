@@ -122,10 +122,43 @@ class _MyBookingsState extends State<MyBookings> {
                     padding: const EdgeInsets.all(16),
                     itemCount: bookings.length,
                     itemBuilder: (context, index) {
+                      final booking = bookings[index];
                       return BookingCard(
-                        booking: bookings[index],
+                        booking: booking,
                         onTap: () {
                           // Optionally handle tap
+                        },
+                        onDelete: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => Center(
+                              child: AlertDialog(
+                                title: const Text('Delete Booking'),
+                                content: const Text(
+                                  'Are you sure you want to delete this booking?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(ctx).pop(false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(ctx).pop(true),
+                                    child: const Text(
+                                      'Delete',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                          if (confirm == true) {
+                            await BookingService().deleteBooking(booking.uid);
+                            setState(() {}); // Refresh list
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Booking deleted.')),
+                            );
+                          }
                         },
                       );
                     },
