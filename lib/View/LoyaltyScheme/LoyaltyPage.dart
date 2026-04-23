@@ -23,8 +23,11 @@ class LoyaltyPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Loyalty Scheme'),
-          bottom: const TabBar(
-            tabs: [
+          bottom: TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            indicatorColor: Colors.white,
+            tabs: const [
               Tab(text: 'Shop'),
               Tab(text: 'My Rewards'),
               Tab(text: 'Scan QR'),

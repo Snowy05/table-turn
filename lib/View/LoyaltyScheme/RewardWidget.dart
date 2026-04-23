@@ -38,7 +38,9 @@ class RewardWidget extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 item.name,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4),
