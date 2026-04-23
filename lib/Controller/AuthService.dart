@@ -7,12 +7,12 @@ class AuthService {
 
   //signup method, (Future) promises return object or an error
   Future<UserCredential> signUp(
-    String email, 
+    String email,
     String password,
     String name,
     String phoneNumber,
     String age,
-    ) async {
+  ) async {
     UserCredential result = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -20,7 +20,7 @@ class AuthService {
 
     User? firebaseUser = result.user;
 
-    if (firebaseUser != null){
+    if (firebaseUser != null) {
       AppUser appUser = AppUser(
         uid: firebaseUser.uid,
         email: firebaseUser.email ?? '',
@@ -32,9 +32,9 @@ class AuthService {
         createdAt: DateTime.now(),
       );
       await FirebaseFirestore.instance
-        .collection('users')
-        .doc(appUser.uid)
-        .set(appUser.toMap());
+          .collection('users')
+          .doc(appUser.uid)
+          .set(appUser.toMap());
       // Here you would typically save the appUser to Firestore or another database
     }
     return result;
@@ -52,8 +52,31 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
-//current user getter
+
+  // Change password method
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null || user.email == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No user is currently signed in.',
+      );
+    }
+    // Re-authenticate user
+    final cred = EmailAuthProvider.credential(
+      email: user.email!,
+      password: currentPassword,
+    );
+    await user.reauthenticateWithCredential(cred);
+    // Update password
+    await user.updatePassword(newPassword);
+  }
+
+  //current user getter
   User? get currentUser => _auth.currentUser;
-//change listener, listens to auth state changes and returns a stream of User objects, which can be used to update the UI accordingly
+  //change listener, listens to auth state changes and returns a stream of User objects, which can be used to update the UI accordingly
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 }
