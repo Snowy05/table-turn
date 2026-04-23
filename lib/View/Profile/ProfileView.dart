@@ -67,95 +67,107 @@ class _ProfileViewState extends State<ProfileView> {
         _profilePicUrl ??= appUser.profilePicUrl;
         return Scaffold(
           appBar: AppBar(title: const Text('Profile')),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: ProfileCard(
-                profilePicUrl: _profilePicUrl,
-                newProfilePicPath: _newProfilePicPath,
-                onProfilePicTap: () async {
-                  final picked = await _picker.pickImage(
-                    source: ImageSource.gallery,
-                    imageQuality: 80,
-                  );
-                  if (picked != null) {
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFFFFFFF), Color(0xFFF9E6C1)],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: ProfileCard(
+                  profilePicUrl: _profilePicUrl,
+                  newProfilePicPath: _newProfilePicPath,
+                  onProfilePicTap: () async {
+                    final picked = await _picker.pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 80,
+                    );
+                    if (picked != null) {
+                      setState(() {
+                        _newProfilePicPath = picked.path;
+                      });
+                    }
+                  },
+                  nameController: _nameController,
+                  phoneController: _phoneController,
+                  editingName: _editingName,
+                  editingPhone: _editingPhone,
+                  onEditName: () {
                     setState(() {
-                      _newProfilePicPath = picked.path;
+                      _editingName = !_editingName;
                     });
-                  }
-                },
-                nameController: _nameController,
-                phoneController: _phoneController,
-                editingName: _editingName,
-                editingPhone: _editingPhone,
-                onEditName: () {
-                  setState(() {
-                    _editingName = !_editingName;
-                  });
-                },
-                onEditPhone: () {
-                  setState(() {
-                    _editingPhone = !_editingPhone;
-                  });
-                },
-                onCancelEditName: () {
-                  setState(() {
-                    _nameController.text = appUser.name;
-                    _editingName = false;
-                  });
-                },
-                onCancelEditPhone: () {
-                  setState(() {
-                    _phoneController.text = appUser.phoneNumber;
-                    _editingPhone = false;
-                  });
-                },
-                onSave: _isSaving
-                    ? null
-                    : () async {
-                        setState(() {
-                          _isSaving = true;
-                        });
-                        String? uploadedPicUrl = _profilePicUrl;
-                        if (_newProfilePicPath != null) {
-                          try {
-                            final storageRef = FirebaseStorage.instance
-                                .ref()
-                                .child('profile_pics/${user.uid}.jpg');
-                            await storageRef.putFile(File(_newProfilePicPath!));
-                            uploadedPicUrl = await storageRef.getDownloadURL();
-                          } catch (e) {}
-                        }
-                        await FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(user.uid)
-                            .update({
-                              'name': _nameController.text.trim(),
-                              'phoneNumber': _phoneController.text.trim(),
-                              if (uploadedPicUrl != null)
-                                'profilePicUrl': uploadedPicUrl,
-                            });
-                        if (_nameController.text.trim() !=
-                            (user.displayName ?? '')) {
-                          await user.updateDisplayName(
-                            _nameController.text.trim(),
+                  },
+                  onEditPhone: () {
+                    setState(() {
+                      _editingPhone = !_editingPhone;
+                    });
+                  },
+                  onCancelEditName: () {
+                    setState(() {
+                      _nameController.text = appUser.name;
+                      _editingName = false;
+                    });
+                  },
+                  onCancelEditPhone: () {
+                    setState(() {
+                      _phoneController.text = appUser.phoneNumber;
+                      _editingPhone = false;
+                    });
+                  },
+                  onSave: _isSaving
+                      ? null
+                      : () async {
+                          setState(() {
+                            _isSaving = true;
+                          });
+                          String? uploadedPicUrl = _profilePicUrl;
+                          if (_newProfilePicPath != null) {
+                            try {
+                              final storageRef = FirebaseStorage.instance
+                                  .ref()
+                                  .child('profile_pics/${user.uid}.jpg');
+                              await storageRef.putFile(
+                                File(_newProfilePicPath!),
+                              );
+                              uploadedPicUrl = await storageRef
+                                  .getDownloadURL();
+                            } catch (e) {}
+                          }
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .update({
+                                'name': _nameController.text.trim(),
+                                'phoneNumber': _phoneController.text.trim(),
+                                if (uploadedPicUrl != null)
+                                  'profilePicUrl': uploadedPicUrl,
+                              });
+                          if (_nameController.text.trim() !=
+                              (user.displayName ?? '')) {
+                            await user.updateDisplayName(
+                              _nameController.text.trim(),
+                            );
+                          }
+                          setState(() {
+                            _isSaving = false;
+                            _profilePicUrl = uploadedPicUrl;
+                            _newProfilePicPath = null;
+                            _editingName = false;
+                            _editingPhone = false;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Profile updated!')),
                           );
-                        }
-                        setState(() {
-                          _isSaving = false;
-                          _profilePicUrl = uploadedPicUrl;
-                          _newProfilePicPath = null;
-                          _editingName = false;
-                          _editingPhone = false;
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Profile updated!')),
-                        );
-                      },
-                isSaving: _isSaving,
-                email: appUser.email,
-                favouriteGames: appUser.favouriteGames,
-                onChangePassword: () => _showChangePasswordDialog(context),
+                        },
+                  isSaving: _isSaving,
+                  email: appUser.email,
+                  favouriteGames: appUser.favouriteGames,
+                  onChangePassword: () => _showChangePasswordDialog(context),
+                ),
               ),
             ),
           ),
