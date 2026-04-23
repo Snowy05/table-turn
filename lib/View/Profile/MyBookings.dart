@@ -4,8 +4,16 @@ import 'package:tableturn_project0/Controller/BookingService.dart';
 import 'package:tableturn_project0/View/Profile/BookingCard.dart';
 import 'package:tableturn_project0/Model/bookingModel.dart';
 
-class MyBookings extends StatelessWidget {
+class MyBookings extends StatefulWidget {
   const MyBookings({Key? key}) : super(key: key);
+
+  @override
+  State<MyBookings> createState() => _MyBookingsState();
+}
+
+class _MyBookingsState extends State<MyBookings> {
+  bool showActive = true;
+  bool dateAsc = false;
 
   @override
   Widget build(BuildContext context) {
@@ -17,18 +25,13 @@ class MyBookings extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('My Bookings')),
       body: Container(
-        decoration: 
-        const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [           
-             Color(0xFFFFFFFF), 
-
-            Color(0xFFFFBA97), 
-          ],
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFFFFF), Color(0xFFFFBA97)],
+          ),
         ),
-      ),
         child: FutureBuilder<List<BookingModel>>(
           future: BookingService().getUserBookings(user.uid),
           builder: (context, snapshot) {
@@ -40,26 +43,135 @@ class MyBookings extends StatelessWidget {
                 child: Text('Failed to load bookings: \\${snapshot.error}'),
               );
             }
-            final bookings = snapshot.data ?? [];
+            var bookings = snapshot.data ?? [];
             debugPrint('Fetched bookings count: \\${bookings.length}'); // DEBUG
             if (bookings.isEmpty) {
               return Center(
                 child: Text('No bookings found for userId: \\${user.uid}'),
               );
             }
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: bookings.length,
-              itemBuilder: (context, index) {
-                return BookingCard(
-                  booking: bookings[index],
-                  onTap: () {
-                    // Optionally handle tap
-                  },
-                );
-              },
+
+            // Filter by active/expired
+            final now = DateTime.now();
+            bookings = bookings
+                .where(
+                  (b) => showActive
+                      ? b.bookingEndTime.isAfter(now)
+                      : b.bookingEndTime.isBefore(now),
+                )
+                .toList();
+
+            // Sort by date
+            bookings.sort(
+              (a, b) => dateAsc
+                  ? a.bookingStartTime.compareTo(b.bookingStartTime)
+                  : b.bookingStartTime.compareTo(a.bookingStartTime),
+            );
+
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            _SegmentButton(
+                              text: 'Active',
+                              selected: showActive,
+                              onTap: () => setState(() => showActive = true),
+                            ),
+                            _SegmentButton(
+                              text: 'Expired',
+                              selected: !showActive,
+                              onTap: () => setState(() => showActive = false),
+                            ),
+                          ],
+                        ),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            dateAsc = !dateAsc;
+                          });
+                        },
+                        icon: Icon(
+                          dateAsc ? Icons.arrow_upward : Icons.arrow_downward,
+                        ),
+                        label: const Text('Date'),
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: bookings.length,
+                    itemBuilder: (context, index) {
+                      return BookingCard(
+                        booking: bookings[index],
+                        onTap: () {
+                          // Optionally handle tap
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _SegmentButton extends StatelessWidget {
+  final String text;
+  final bool selected;
+  final VoidCallback onTap;
+  const _SegmentButton({
+    required this.text,
+    required this.selected,
+    required this.onTap,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.12)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: selected
+                ? Theme.of(context).colorScheme.primary
+                : Colors.black87,
+          ),
         ),
       ),
     );
