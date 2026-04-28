@@ -4,6 +4,7 @@ import 'package:tableturn_project0/main.dart' as MyApp;
 import '../Model/font_size_provider.dart';
 import '../Model/high_contrast_provider.dart';
 import '../Controller/app_localizations.dart';
+import '../GlobalWidgets/GlobalDropdownField.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -74,8 +75,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     fontSize: 18,
                   ),
                 ),
-                DropdownButton<Locale>(
+                GlobalDropdownField<Locale>(
                   value: currentLocale,
+                  hintText: localizations.get('language'),
+                  maxWidth: 160,
                   items: const [
                     DropdownMenuItem(
                       value: Locale('en'),

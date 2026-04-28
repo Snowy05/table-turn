@@ -118,10 +118,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                         _phoneNumberController.text,
                                         _ageController.text,
                                       );
-                                      // You can add navigation or success logic here
+                                      if (!mounted) return;
+                                      Navigator.pushReplacementNamed(
+                                        context,
+                                        '/dashboard',
+                                      );
                                     } catch (e) {
                                       // Show error message
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(
                                           content: Text('Signup failed: $e'),
                                         ),

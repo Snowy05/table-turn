@@ -4,7 +4,12 @@ import '../Model/gowModel.dart';
 
 // service for handling Game of the Week voting and results
 class GowService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  GowService({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _auth = auth ?? FirebaseAuth.instance;
+
+  final FirebaseFirestore _db;
+  final FirebaseAuth _auth;
   final String votesCollection = 'votes';
   final String gowCollection = 'gow';
 
@@ -13,7 +18,7 @@ class GowService {
     required String gameId,
     required String weekId,
   }) async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _auth.currentUser;
     if (user == null) throw Exception('User not logged in');
     final voteDoc = _db.collection(votesCollection).doc('${user.uid}_$weekId');
     await voteDoc.set({
@@ -26,7 +31,7 @@ class GowService {
 
   //check if user has already voted this week
   Future<bool> hasVotedThisWeek(String weekId) async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _auth.currentUser;
     if (user == null) return false;
     final doc = await _db
         .collection(votesCollection)
@@ -47,12 +52,14 @@ class GowService {
       votes[gameId] = (votes[gameId] ?? 0) + 1; //if gameId is null, skip it
     }
     if (votes.isEmpty) return null;
-    votes.removeWhere((key, value) => key == null); // Remove null keys if any to prevent errors
+    votes.removeWhere(
+      (key, value) => key == null,
+    ); // Remove null keys if any to prevent errors
     return votes.entries.reduce((a, b) => a.value >= b.value ? a : b).key;
   }
 
   //save the Game of the Week winner
-  
+
   Future<void> setGameOfTheWeek({
     required String gameId,
     required String weekId,

@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:tableturn_project0/Controller/BookingService.dart';
 import 'package:tableturn_project0/Controller/BookingHelpers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/TableAvailabilityService.dart'
     as table_availability;
-import 'package:tableturn_project0/Model/Options/constants.dart'
-    as options_constants;
 import 'package:tableturn_project0/Model/bookingModel.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tableturn_project0/Model/gameModel.dart';
 import 'package:provider/provider.dart';
 import 'package:tableturn_project0/Model/bookingFormModel.dart';
 import 'package:tableturn_project0/View/Booking/BookingButton.dart';
 import 'package:tableturn_project0/View/Booking/SlotPickerModal.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
+import 'package:tableturn_project0/GlobalWidgets/GlobalDropdownField.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
@@ -113,7 +110,7 @@ class _BookingPageState extends State<BookingPage> {
         bookingForm.selectedTable == null ||
         bookingForm.selectedSlot == null)
       return;
-
+    // check availability for all slots needed for the duration
     final dateStr = bookingForm.selectedDate!.toIso8601String().split('T')[0];
     final availableSlots = await table_availability.Tableavailabilityservice()
         .getAvailableSlots(dateStr, bookingForm.selectedTable!);
@@ -159,6 +156,7 @@ class _BookingPageState extends State<BookingPage> {
       ).showSnackBar(SnackBar(content: Text('You must be logged in to book.')));
       return;
     }
+    // Create booking model when validated
     final booking = BookingModel(
       uid: '',
       userId: user.uid,
@@ -322,9 +320,10 @@ class _BookingPageState extends State<BookingPage> {
                     SizedBox(height: 32),
                     Text('Select Table'),
                     SizedBox(height: 12),
-                    DropdownButton<String>(
+                    GlobalDropdownField<String>(
                       value: bookingForm.selectedTable,
-                      hint: Text('Choose Table'),
+                      hintText: 'Choose Table',
+                      maxWidth: 220,
                       items: ['table1', 'table2', 'table3', 'table4', 'table5']
                           .map((table) {
                             final tableNumber = table.replaceAll('table', '');
@@ -359,8 +358,11 @@ class _BookingPageState extends State<BookingPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Duration (hours)'),
-                    DropdownButton<int>(
+                    SizedBox(height: 12),
+                    GlobalDropdownField<int>(
                       value: bookingForm.duration,
+                      hintText: 'Choose duration',
+                      maxWidth: 180,
                       items: [1, 2, 3, 4, 5]
                           .map(
                             (e) =>
@@ -374,8 +376,10 @@ class _BookingPageState extends State<BookingPage> {
                     SizedBox(height: 24),
                     Text('Number of Guests'),
                     SizedBox(height: 12),
-                    DropdownButton<int>(
+                    GlobalDropdownField<int>(
                       value: bookingForm.guests,
+                      hintText: 'Choose guests',
+                      maxWidth: 180,
                       items: List.generate(12, (i) => i + 1)
                           .map(
                             (e) =>
@@ -399,11 +403,12 @@ class _BookingPageState extends State<BookingPage> {
                   Text('Boardgame (optional)'),
                   _loadingBoardgames
                       ? CircularProgressIndicator()
-                      : DropdownButton<String>(
+                      : GlobalDropdownField<String>(
                           value: bookingForm.selectedBoardgame ?? 'None',
-                          hint: Text('Choose Boardgame'),
+                          hintText: 'Choose Boardgame',
+                          maxWidth: 320,
                           items: [
-                            DropdownMenuItem(
+                            const DropdownMenuItem(
                               value: 'None',
                               child: Text('None'),
                             ),

@@ -41,7 +41,7 @@ List<BoardGame> recommendGames(
       .map((t) => t.trim().toLowerCase())
       .toSet();
 
-  // Define which tags are considered player count and age group (lowercase)
+  // define which tags are considered player count and age group (lowercase)
   const playerCountTags = {'2p', '3-4p', '5p+'};
   const ageGroupTags = {'kids', 'teens', 'adults', 'family'};
 
@@ -55,11 +55,10 @@ List<BoardGame> recommendGames(
     //added robust tag processing for game tags as well
     final gameTags = game.tags.map((t) => t.trim().toLowerCase()).toSet();
 
-    // Strict tag match (for tags not covered by fields)
+    // strict tag match (for tags not covered by fields)
     final strictMatches = strictTags
         .where((tag) => gameTags.contains(tag))
         .length;
-    //more forgiving: at least one strict tag must match if any strict tags selected
     final strictOk = strictTags.isEmpty || strictMatches >= 1;
 
     // player count match (use minPlayers/maxPlayers)
@@ -99,7 +98,7 @@ List<BoardGame> recommendGames(
       playTimeMatch = selectedPlayTimes.any((pt) => gamePlayTimes.contains(pt));
     }
 
-    // Complexity match: allow match if tag OR (if available) complexity field matches
+    // complexity match: allow match if tag OR (if available) complexity field matches
     bool complexityMatch = true;
     final complexityTags = {'Easy', 'Medium', 'Hard', 'Expert'};
     final selectedComplexities = tags.intersection(complexityTags);
@@ -107,7 +106,7 @@ List<BoardGame> recommendGames(
       complexityMatch = gameTags.intersection(selectedComplexities).isNotEmpty;
     }
 
-    //relaxed: only require playerMatch and playTimeMatch, others are optional
+    //only require playerMatch and playTimeMatch, others are optional
     final match =
         playerMatch &&
         playTimeMatch &&

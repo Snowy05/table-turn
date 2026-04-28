@@ -17,6 +17,58 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  Future<void> _showForgotPasswordDialog() async {
+    final resetEmailController = TextEditingController(
+      text: _emailController.text.trim(),
+    );
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Reset Password'),
+          content: TextField(
+            controller: resetEmailController,
+            keyboardType: TextInputType.emailAddress,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  await AuthService().resetPassword(resetEmailController.text);
+                  if (!mounted) return;
+                  Navigator.of(dialogContext).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Password reset email sent to ${resetEmailController.text.trim()}.',
+                      ),
+                    ),
+                  );
+                } catch (e) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Password reset failed: $e')),
+                  );
+                }
+              },
+              child: const Text('Send'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +131,9 @@ class _LoginPageState extends State<LoginPage> {
                                     );
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Login failed: $e')),
+                                      SnackBar(
+                                        content: Text('Login failed: $e'),
+                                      ),
                                     );
                                   }
                                 },
@@ -87,12 +141,15 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             SizedBox(height: 12.0),
                             Padding(
-                              padding: const EdgeInsets.only(left: 32, right: 32),
+                              padding: const EdgeInsets.only(
+                                left: 32,
+                                right: 32,
+                              ),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: GestureDetector(
                                   onTap: () {
-                                    // TODO: Implement forgot password navigation
+                                    _showForgotPasswordDialog();
                                   },
                                   child: Text(
                                     'Forgot password?',
@@ -119,56 +176,56 @@ class _LoginPageState extends State<LoginPage> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12.0,
-                                ),
-                                child: Text(
-                                  'OR',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  child: Text(
+                                    'OR',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Divider(
-                                  thickness: 1,
-                                  color: Colors.grey[400],
+                                Expanded(
+                                  child: Divider(
+                                    thickness: 1,
+                                    color: Colors.grey[400],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 28.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("Don't have an account? "),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacementNamed(
-                                    context,
-                                    '/signup',
-                                  );
-                                },
-                                child: Text(
-                                  'Sign up here',
-                                  style: TextStyle(
-                                    color: Theme.of(
+                              ],
+                            ),
+                            SizedBox(height: 28.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Don't have an account? "),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushReplacementNamed(
                                       context,
-                                    ).colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
+                                      '/signup',
+                                    );
+                                  },
+                                  child: Text(
+                                    'Sign up here',
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-            )
           ],
         ),
       ),

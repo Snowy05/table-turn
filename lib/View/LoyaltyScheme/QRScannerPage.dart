@@ -28,7 +28,6 @@ class _QRScannerPageState extends State<QRScannerPage> {
           _resultMessage = 'Points added!';
         });
       }
-      // Do not clear the message on error or repeat scan to allow user to see the success message until they scan another code
     } catch (e) {
       // Do not show any message on error for now, just ignore and allow rescanning
     } finally {

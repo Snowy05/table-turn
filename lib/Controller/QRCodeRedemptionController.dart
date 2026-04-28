@@ -4,7 +4,7 @@ import 'LoyaltyService.dart';
 
 class QRCodeRedemptionController {
   final QRCodeService _qrCodeService = QRCodeService();
-
+//takes scanned code id redeems it and adds points to user if valid returns points added or null if invalid
   Future<int?> redeemScannedCode(String codeId) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {

@@ -13,6 +13,20 @@ import '../../Model/shopItemModel.dart';
 class LoyaltyPage extends StatelessWidget {
   const LoyaltyPage({Key? key}) : super(key: key);
 
+  SliverGridDelegateWithFixedCrossAxisCount _rewardGridDelegate(
+    BuildContext context,
+  ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isCompactPhone = screenWidth < 390;
+
+    return SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: isCompactPhone ? 0.68 : 0.8,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -88,13 +102,7 @@ class LoyaltyPage extends StatelessWidget {
                                 return GridView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        mainAxisSpacing: 12,
-                                        crossAxisSpacing: 12,
-                                        childAspectRatio: 1,
-                                      ),
+                                  gridDelegate: _rewardGridDelegate(context),
                                   itemCount: items.length,
                                   itemBuilder: (context, index) {
                                     final item = items[index];
@@ -180,13 +188,7 @@ class LoyaltyPage extends StatelessWidget {
                               return GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 12,
-                                      crossAxisSpacing: 12,
-                                      childAspectRatio: 1,
-                                    ),
+                                gridDelegate: _rewardGridDelegate(context),
                                 itemCount: myItems.length,
                                 itemBuilder: (context, index) {
                                   final item = myItems[index];

@@ -2,6 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoyaltyService {
+  LoyaltyService({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _auth = auth ?? FirebaseAuth.instance;
+
+  final FirebaseFirestore _firestore;
+  final FirebaseAuth _auth;
+
   //add   a reward to the current users rewards list
   Future<void> addRewardToUser(String rewardId) async {
     final user = _auth.currentUser;
@@ -19,9 +26,6 @@ class LoyaltyService {
     final userRef = _firestore.collection('users').doc(user.uid);
     return userRef.snapshots().map((snap) => snap.data());
   }
-
-  final _firestore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
 
   //add points to the current user
   Future<void> addPoints(int points) async {

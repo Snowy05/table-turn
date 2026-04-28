@@ -48,6 +48,18 @@ class AuthService {
     );
   }
 
+  Future<void> resetPassword(String email) async {
+    final normalizedEmail = email.trim();
+    if (normalizedEmail.isEmpty) {
+      throw FirebaseAuthException(
+        code: 'invalid-email',
+        message: 'Please enter your email address.',
+      );
+    }
+
+    await _auth.sendPasswordResetEmail(email: normalizedEmail);
+  }
+
   //signout method, also nothing to see here
   Future<void> signOut() async {
     await _auth.signOut();

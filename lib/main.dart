@@ -62,12 +62,14 @@ class _MyAppState extends State<MyApp> {
               ),
               child: MaterialApp(
                 title: 'TableTurn',
+                debugShowCheckedModeBanner: false,
                 theme: highContrastProvider.highContrast
                     ? HighContrastTheme.theme
                     : AppTheme.lightTheme,
                 locale: _locale,
                 home: LoginPage(),
                 routes: appRoutes,
+                // Localization setup
                 localizationsDelegates: const [
                   AppLocalizationsDelegate(),
                   GlobalMaterialLocalizations.delegate,

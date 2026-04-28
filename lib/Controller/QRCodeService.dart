@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QRCodeService {
-  final CollectionReference _codesCollection = FirebaseFirestore.instance
-      .collection('qrCodes');
+  QRCodeService({FirebaseFirestore? firestore})
+    : _codesCollection = (firestore ?? FirebaseFirestore.instance).collection(
+        'qrCodes',
+      );
 
-  //staff or admin create a new QR code entry in Firestore
+  final CollectionReference<Map<String, dynamic>> _codesCollection;
+
+  //staff or admin create a new QR code entry in Firestore - righ now developmen t
   Future<String> createQRCode({required int points, String? label}) async {
     final doc = await _codesCollection.add({
       'points': points,

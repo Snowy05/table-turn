@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tableturn_project0/Model/Options/gameOptions.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGameCardOpen.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
+import 'package:tableturn_project0/GlobalWidgets/GlobalDropdownField.dart';
 import '../../Model/gameModel.dart';
 import '../../Controller/GameService.dart';
 import 'BoardGameCard.dart';
@@ -24,19 +25,13 @@ class _BoardGameState extends State<BoardGame> {
     return Scaffold(
       appBar: AppBar(title: const Text('Board Games')),
       body: Container(
-        
-          decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFFFFFFF), 
-                        Color(0xFFF9E6C1), 
-
-
-          ],
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFFFFF), Color(0xFFF9E6C1)],
+          ),
         ),
-      ),
         child: Column(
           children: [
             Padding(
@@ -44,71 +39,74 @@ class _BoardGameState extends State<BoardGame> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Tagbttn(
-                      selectedTags: selectedTags,
-                      allTags: allTags,
-                      onApply: (newTags) {
+                    flex: 5,
+                    child: SizedBox(
+                      height: 52,
+                      child: Tagbttn(
+                        selectedTags: selectedTags,
+                        allTags: allTags,
+                        onApply: (newTags) {
+                          setState(() {
+                            selectedTags = newTags;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 4,
+                    child: GlobalDropdownField<String>(
+                      value: selectedComplexity,
+                      hintText: 'Complexity',
+                      maxWidth: double.infinity,
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('All'),
+                        ),
+                        ...allComplexities
+                            .map(
+                              (complexity) => DropdownMenuItem(
+                                value: complexity,
+                                child: Text(complexity),
+                              ),
+                            )
+                            .toList(),
+                      ],
+                      onChanged: (value) {
                         setState(() {
-                          selectedTags = newTags;
+                          selectedComplexity = value;
                         });
                       },
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  DropdownButton<String>(
-                    value: selectedComplexity,
-                    hint: const Text('Complexity'),
-                    items: [
-                      DropdownMenuItem<String>(value: null, child: Text('All')),
-                      ...allComplexities
-                          .map(
-                            (complexity) => DropdownMenuItem(
-                              value: complexity,
-                              child: Text(complexity),
-                            ),
-                          )
-                          .toList(),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedComplexity = value;
-                      });
-                    },
-                    isExpanded: false,
-                    underline: Container(height: 2, color: Colors.brown),
-                    style: TextStyle(
-                      fontSize: 16 * MediaQuery.textScaleFactorOf(context),
-                      color: Colors.brown,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  DropdownButton<String>(
-                    value: selectedAgeGroup,
-                    hint: const Text('Age Group'),
-                    items: [
-                      DropdownMenuItem<String>(
-                        value: null,
-                        child: Text('All Ages'),
-                      ),
-                      ...allAgeGroups
-                          .map(
-                            (ageGroup) => DropdownMenuItem<String>(
-                              value: ageGroup,
-                              child: Text(ageGroup),
-                            ),
-                          )
-                          .toList(),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedAgeGroup = value;
-                      });
-                    },
-                    isExpanded: false,
-                    underline: Container(height: 2, color: Colors.brown),
-                    style: TextStyle(
-                      fontSize: 16 * MediaQuery.textScaleFactorOf(context),
-                      color: Colors.brown,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 4,
+                    child: GlobalDropdownField<String>(
+                      value: selectedAgeGroup,
+                      hintText: 'Age Group',
+                      maxWidth: double.infinity,
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('All Ages'),
+                        ),
+                        ...allAgeGroups
+                            .map(
+                              (ageGroup) => DropdownMenuItem<String>(
+                                value: ageGroup,
+                                child: Text(ageGroup),
+                              ),
+                            )
+                            .toList(),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedAgeGroup = value;
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -125,7 +123,7 @@ class _BoardGameState extends State<BoardGame> {
                     return Center(child: Text('Error: \\${snapshot.error}'));
                   }
                   final games = snapshot.data ?? [];
-        
+
                   // Multi-criteria filtering
                   List<GameModel> filteredGames = games.where((game) {
                     if (selectedAgeGroup != null &&
@@ -144,7 +142,7 @@ class _BoardGameState extends State<BoardGame> {
                     }
                     return true;
                   }).toList();
-        
+
                   if (filteredGames.isEmpty) {
                     return const Center(child: Text('No games found.'));
                   }

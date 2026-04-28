@@ -25,13 +25,13 @@ class _FindYourGameQuizState extends State<FindYourGameQuiz> {
     super.initState();
     _selectedTags.addAll(List.generate(questionnaire.length, (_) => []));
   }
-
+// handle answer selection and update selected tags for the question
   void _onAnswerSelected(int questionIdx, List<String> tags) {
     setState(() {
       _selectedTags[questionIdx] = tags;
     });
   }
-
+// get recommendations based on selected tags and update state
   Future<void> _getRecommendations() async {
     setState(() {
       _loading = true;

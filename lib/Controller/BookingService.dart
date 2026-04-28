@@ -2,9 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../Model/bookingModel.dart';
 
 class BookingService {
-  final CollectionReference bookingsCollection = FirebaseFirestore.instance
-      .collection('bookings');
-//CRUD operations for bookings
+  BookingService({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      bookingsCollection = (firestore ?? FirebaseFirestore.instance).collection(
+        'bookings',
+      );
+
+  final FirebaseFirestore _firestore;
+  final CollectionReference<Map<String, dynamic>> bookingsCollection;
+  //CRUD operations for bookings
   Future<String> createBooking(BookingModel booking) async {
     final docRef = await bookingsCollection.add({
       'userId': booking.userId,
@@ -40,7 +46,7 @@ class BookingService {
     await bookingsCollection.doc(bookingId).delete();
   }
 
-    ///mark booking as ended and increment boardgame quantity, function for admin to end booking.
+  ///mark booking as ended and increment boardgame quantity, function for admin to end booking.
   Future<void> endBookingAndReturnBoardgame(
     String bookingId,
     String boardGameId,
@@ -49,9 +55,7 @@ class BookingService {
     await bookingsCollection.doc(bookingId).update({'status': 'ended'});
     //increment boardgame quantity if valid
     if (boardGameId.isNotEmpty && boardGameId != 'None') {
-      final gameRef = FirebaseFirestore.instance
-          .collection('boardgames')
-          .doc(boardGameId);
+      final gameRef = _firestore.collection('boardgames').doc(boardGameId);
       await gameRef.update({'quantityInStock': FieldValue.increment(1)});
     }
   }
