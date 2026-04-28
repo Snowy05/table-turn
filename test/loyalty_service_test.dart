@@ -11,6 +11,7 @@ void main() {
 
     setUp(() async {
       firestore = FakeFirebaseFirestore();
+      // Setting up a mock authenticated user and a user document in firestore for the loyalty service tests
       auth = MockFirebaseAuth(
         signedIn: true,
         mockUser: MockUser(uid: 'user-1', email: 'test@example.com'),
@@ -24,6 +25,7 @@ void main() {
 
     test('adds points to the current user', () async {
       await service.addPoints(15);
+      //checking that points added correctly
 
       expect(await service.getPoints(), 25);
     });
@@ -45,6 +47,7 @@ void main() {
 
     test('adds a reward to the user document', () async {
       await service.addRewardToUser('reward-1');
+      //Checking that the reward was added to the users rewards list 
 
       final snapshot = await firestore.collection('users').doc('user-1').get();
       expect(snapshot.data()?['rewards'], contains('reward-1'));

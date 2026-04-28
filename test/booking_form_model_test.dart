@@ -10,6 +10,8 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
+    //here test for save, load, clear book functions
+
     test('saves and loads booking selections', () async {
       final model = BookingFormModel()
         ..selectedDate = DateTime(2026, 4, 27)

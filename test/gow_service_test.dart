@@ -5,6 +5,7 @@ import 'package:tableturn_project0/Controller/GowService.dart';
 
 void main() {
   group('GowService', () {
+    //mock firebase for test
     late FakeFirebaseFirestore firestore;
     late MockFirebaseAuth auth;
     late GowService service;
@@ -26,6 +27,7 @@ void main() {
 
     test('returns the most voted game for a week', () async {
       await firestore.collection('votes').doc('user-1_2026-W17').set({
+        //votes for games for the week to test the logic
         'userId': 'user-1',
         'gameId': 'game-a',
         'weekId': '2026-W17',
@@ -50,6 +52,7 @@ void main() {
       await service.setGameOfTheWeek(gameId: 'game-c', weekId: '2026-W18');
 
       final result = await service.getGameOfTheWeek('2026-W18');
+      //checking that the game of the week was saved and can be retrieved with the correct details
 
       expect(result, isNotNull);
       expect(result!.gameId, 'game-c');

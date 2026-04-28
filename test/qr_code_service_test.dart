@@ -11,7 +11,7 @@ void main() {
       firestore = FakeFirebaseFirestore();
       service = QRCodeService(firestore: firestore);
     });
-
+    //testing that a QR code can be created with the correct  metadata
     test('creates a QR code with initial metadata', () async {
       final codeId = await service.createQRCode(points: 25, label: 'Welcome');
 
@@ -31,6 +31,8 @@ void main() {
       });
 
       final firstRedemption = await service.redeemQRCode(
+        //tests for redeem code come back correct and that the user is added to the usedBy list
+        // so that the same user cannot redeem the same code multiple times
         codeId: 'code-1',
         userId: 'user-1',
       );
@@ -49,6 +51,7 @@ void main() {
     });
 
     test('returns null for a missing QR code', () async {
+      //testing that redeeming a non-existent code returns null
       final result = await service.redeemQRCode(
         codeId: 'missing-code',
         userId: 'user-1',

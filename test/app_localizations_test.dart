@@ -4,6 +4,7 @@ import 'package:tableturn_project0/Controller/app_localizations.dart';
 
 void main() {
   group('AppLocalizations', () {
+    //testing localization functionality without needing to run the full app
     test('returns the Spanish translation for a known key', () {
       final localizations = AppLocalizations(const Locale('es'));
 

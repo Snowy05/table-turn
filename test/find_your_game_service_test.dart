@@ -22,6 +22,7 @@ BoardGame _game({
 
 void main() {
   group('recommendGames', () {
+    //setting up some sample games to test the recommendation logic against
     final games = [
       _game(
         name: 'Quick Party',
@@ -55,7 +56,7 @@ void main() {
 
       expect(recommendations.map((game) => game.name), ['Quick Party']);
     });
-
+//testing that games that don't match the player count are excluded
     test('excludes games that do not match the selected player range', () {
       final recommendations = recommendGames([
         ['2p'],

@@ -407,9 +407,9 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
             ? 2
             : 1;
         final childAspectRatio = switch (crossAxisCount) {
-          1 => 2.15,
-          2 => 1.0,
-          _ => 0.82,
+          1 => 1.8,
+          2 => 0.94,
+          _ => 0.8,
         };
 
         return GridView.builder(
@@ -590,6 +590,8 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
         Text(
           isSelected ? 'Selected for this week' : 'Tap to choose this game',
           textAlign: centered ? TextAlign.center : TextAlign.left,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           style: statusStyle,
         ),
       ],
@@ -730,6 +732,59 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
     );
   }
 
+  Widget _buildFloatingVoteButton(BuildContext context) {
+    return SafeArea(
+      top: false,
+      minimum: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1080),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.96),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.black12),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x1A000000),
+                  blurRadius: 18,
+                  offset: Offset(0, 10),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _loading || _selectedGameId == null ? null : _vote,
+                icon: _loading
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.4,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.how_to_vote_rounded),
+                label: Text(
+                  _loading
+                      ? 'Submitting vote...'
+                      : _selectedGameId == null
+                      ? 'Select a game to continue'
+                      : 'Submit vote',
+                ),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(58),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -769,74 +824,62 @@ class _GOWVotingPageState extends State<GOWVotingPage> {
 
             final games = snapshot.data!;
             return SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1080),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildHeroPanel(context),
-                        if (_voteMessage != null) ...[
-                          const SizedBox(height: 18),
-                          _buildMessageBanner(context, _voteMessage!),
-                        ],
-                        const SizedBox(height: 24),
-                        if (_hasVoted)
-                          _buildVotedState(context)
-                        else ...[
-                          Text(
-                            'Select one game below to cast your vote.',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: kSecondaryColor,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'The layout now adapts for mobile and larger screens, so the ballot stays readable wherever you open it.',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.black54,
-                              height: 1.45,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          _buildVotingGrid(context, games),
-                          const SizedBox(height: 22),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: _loading || _selectedGameId == null
-                                  ? null
-                                  : _vote,
-                              icon: _loading
-                                  ? const SizedBox(
-                                      height: 18,
-                                      width: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.4,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const Icon(Icons.how_to_vote_rounded),
-                              label: Text(
-                                _loading
-                                    ? 'Submitting vote...'
-                                    : _selectedGameId == null
-                                    ? 'Select a game to continue'
-                                    : 'Submit vote',
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(
+                      20,
+                      24,
+                      20,
+                      _hasVoted ? 28 : 132,
+                    ),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1080),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildHeroPanel(context),
+                            if (_voteMessage != null) ...[
+                              const SizedBox(height: 18),
+                              _buildMessageBanner(context, _voteMessage!),
+                            ],
+                            const SizedBox(height: 24),
+                            if (_hasVoted)
+                              _buildVotedState(context)
+                            else ...[
+                              Text(
+                                'Select one game below to cast your vote.',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: kSecondaryColor,
+                                ),
                               ),
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size.fromHeight(58),
+                              const SizedBox(height: 8),
+                              Text(
+                                'The layout now adapts for mobile and larger screens, so the ballot stays readable wherever you open it.',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: Colors.black54,
+                                  height: 1.45,
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
-                      ],
+                              const SizedBox(height: 20),
+                              _buildVotingGrid(context, games),
+                            ],
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  if (!_hasVoted)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: _buildFloatingVoteButton(context),
+                    ),
+                ],
               ),
             );
           },
