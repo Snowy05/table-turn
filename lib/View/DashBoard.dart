@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 import 'package:tableturn_project0/GlobalWidgets/DashLongButton.dart';
-import 'package:tableturn_project0/GlobalWidgets/dice_roll_loading.dart';
 
 import 'package:tableturn_project0/Controller/app_localizations.dart';
 
@@ -65,7 +64,7 @@ class DashboardPage extends StatelessWidget {
             .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const DiceRollLoadingScreen(message: 'Loading dashboard...');
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError ||
               !snapshot.hasData ||

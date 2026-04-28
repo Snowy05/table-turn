@@ -18,10 +18,7 @@ import 'View/Profile/MyBookings.dart';
 final Map<String, WidgetBuilder> appRoutes = {
   '/signup': (context) => SignUpPage(),
   '/login': (context) => LoginPage(),
-  '/dashboard': (context) => const PageIntroLoader(
-    message: 'Loading dashboard...',
-    child: DashboardPage(),
-  ),
+  '/dashboard': (context) => DashboardPage(),
   '/boardgames': (context) => const PageIntroLoader(
     message: 'Loading board games...',
     child: BoardGame(),

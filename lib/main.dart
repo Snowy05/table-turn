@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:tableturn_project0/GlobalWidgets/dice_roll_loading.dart';
 import 'package:tableturn_project0/View/Dashboard.dart';
 import 'package:tableturn_project0/Model/font_size_provider.dart';
 import 'package:tableturn_project0/Model/high_contrast_provider.dart';
@@ -70,13 +69,9 @@ class _MyAppState extends State<MyApp> {
                     ? HighContrastTheme.theme
                     : AppTheme.lightTheme,
                 locale: _locale,
-                home: PageIntroLoader(
-                  message: 'Rolling into TableTurn...',
-                  minimumDuration: const Duration(milliseconds: 2200),
-                  child: FirebaseAuth.instance.currentUser == null
-                      ? const LoginPage()
-                      : const DashboardPage(),
-                ),
+                home: FirebaseAuth.instance.currentUser == null
+                    ? const LoginPage()
+                    : const DashboardPage(),
                 routes: appRoutes,
                 // Localization setup
                 localizationsDelegates: const [
