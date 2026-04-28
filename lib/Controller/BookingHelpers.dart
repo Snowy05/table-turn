@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../Model/gameModel.dart';
 import '../Model/Options/constants.dart' as options_constants;
 import '../Model/bookingModel.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'TableAvailabilityService.dart' as table_availability;
 
 class BookingHelpers {
@@ -25,13 +24,13 @@ class BookingHelpers {
     return slotTimes.skip(startIdx).take(duration).toList();
   }
 
-  // Fetch fullness for the next week
+  // Fetch fullness for the next two weeks shown in the booking calendar.
   static Future<Map<DateTime, double>> fetchFullnessForNextWeek(
     String? selectedTable,
   ) async {
     final Map<DateTime, double> result = {};
     final now = DateTime.now();
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 14; i++) {
       final day = DateTime(now.year, now.month, now.day + i);
       final dateStr = day.toIso8601String().split('T')[0];
       final availableSlots = await table_availability.Tableavailabilityservice()

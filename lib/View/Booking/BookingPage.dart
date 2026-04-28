@@ -27,6 +27,55 @@ class _BookingPageState extends State<BookingPage> {
   bool _hasInitializedFormBindings = false;
   String? _lastLoadedTable;
 
+  Color _calendarColorForDay(DateTime day) {
+    final key = DateTime(day.year, day.month, day.day);
+    final fullness = _fullnessByDay[key] ?? 0.0;
+
+    if (fullness >= 0.8) {
+      return Colors.red;
+    }
+    if (fullness >= 0.5) {
+      return Colors.orange;
+    }
+    return Colors.green;
+  }
+
+  Widget _buildCalendarDayCell(
+    DateTime day, {
+    bool isSelected = false,
+    bool isToday = false,
+  }) {
+    return Container(
+      margin: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: _calendarColorForDay(day),
+        borderRadius: BorderRadius.circular(8),
+        border: isSelected
+            ? Border.all(color: Colors.black, width: 3)
+            : isToday
+            ? Border.all(color: Colors.white, width: 2)
+            : null,
+        boxShadow: isSelected
+            ? const [
+                BoxShadow(
+                  color: Color(0x33000000),
+                  blurRadius: 8,
+                  offset: Offset(0, 3),
+                ),
+              ]
+            : null,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '${day.day}',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   Widget _stepperControlsBuilder(
     BuildContext context,
     ControlsDetails details,
@@ -374,37 +423,15 @@ class _BookingPageState extends State<BookingPage> {
                                 selectedDayPredicate: (day) =>
                                     isSameDay(day, bookingForm.selectedDate),
                                 calendarBuilders: CalendarBuilders(
-                                  defaultBuilder: (context, day, focusedDay) {
-                                    final key = DateTime(
-                                      day.year,
-                                      day.month,
-                                      day.day,
-                                    );
-                                    final fullness = _fullnessByDay[key] ?? 0.0;
-                                    Color bg;
-                                    if (fullness >= 0.8) {
-                                      bg = Colors.red;
-                                    } else if (fullness >= 0.5) {
-                                      bg = Colors.orange;
-                                    } else {
-                                      bg = Colors.green;
-                                    }
-                                    return Container(
-                                      margin: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: bg,
-                                        borderRadius: BorderRadius.circular(8),
+                                  defaultBuilder: (context, day, focusedDay) =>
+                                      _buildCalendarDayCell(day),
+                                  todayBuilder: (context, day, focusedDay) =>
+                                      _buildCalendarDayCell(day, isToday: true),
+                                  selectedBuilder: (context, day, focusedDay) =>
+                                      _buildCalendarDayCell(
+                                        day,
+                                        isSelected: true,
                                       ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        '${day.day}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    );
-                                  },
                                 ),
                               );
                             },
