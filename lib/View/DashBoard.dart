@@ -3,10 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
 import 'package:tableturn_project0/GlobalWidgets/DashLongButton.dart';
-import 'package:tableturn_project0/GlobalWidgets/DashRectangleButton.dart';
-import 'package:tableturn_project0/GlobalWidgets/DashSquareButton.dart';
+import 'package:tableturn_project0/GlobalWidgets/dice_roll_loading.dart';
 
-import 'package:tableturn_project0/Model/userModel.dart';
 import 'package:tableturn_project0/Controller/app_localizations.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -67,18 +65,13 @@ class DashboardPage extends StatelessWidget {
             .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const DiceRollLoadingScreen(message: 'Loading dashboard...');
           }
           if (snapshot.hasError ||
               !snapshot.hasData ||
               !snapshot.data!.exists) {
             return Center(child: Text('Failed to load user data'));
           }
-          final appUser = AppUser.fromMap(
-            snapshot.data!.data() as Map<String, dynamic>,
-            snapshot.data!.id,
-          );
-
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tableturn_project0/Model/Options/gameOptions.dart';
 import 'package:tableturn_project0/View/BoardGame/BoardGameCardOpen.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
+import 'package:tableturn_project0/GlobalWidgets/dice_roll_loading.dart';
 import 'package:tableturn_project0/GlobalWidgets/GlobalDropdownField.dart';
 import '../../Model/gameModel.dart';
 import '../../Controller/GameService.dart';
@@ -117,7 +118,9 @@ class _BoardGameState extends State<BoardGame> {
                 stream: Gameservice().getGames(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const DiceRollLoadingScreen(
+                      message: 'Loading board games...',
+                    );
                   }
                   if (snapshot.hasError) {
                     return Center(child: Text('Error: \\${snapshot.error}'));

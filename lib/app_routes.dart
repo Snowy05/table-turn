@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'GlobalWidgets/dice_roll_loading.dart';
 import 'View/SignUp.dart';
 import 'View/Login.dart';
 import 'View/Dashboard.dart';
@@ -17,11 +18,21 @@ import 'View/Profile/MyBookings.dart';
 final Map<String, WidgetBuilder> appRoutes = {
   '/signup': (context) => SignUpPage(),
   '/login': (context) => LoginPage(),
-  '/dashboard': (context) => DashboardPage(),
-  '/boardgames': (context) => BoardGame(),
+  '/dashboard': (context) => const PageIntroLoader(
+    message: 'Loading dashboard...',
+    child: DashboardPage(),
+  ),
+  '/boardgames': (context) => const PageIntroLoader(
+    message: 'Loading board games...',
+    child: BoardGame(),
+  ),
   '/profile': (context) => ProfileView(),
-  '/bookings': (context) => BookingPage(),
-  '/menu': (context) => MenuView(),
+  '/bookings': (context) => const PageIntroLoader(
+    message: 'Loading bookings...',
+    child: BookingPage(),
+  ),
+  '/menu': (context) =>
+      const PageIntroLoader(message: 'Loading menu...', child: MenuView()),
   '/gow': (context) => GOWVotingPage(),
   '/gowresults': (context) => GOWPage(),
   '/loyalty': (context) => LoyaltyPage(),

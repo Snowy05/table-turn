@@ -146,18 +146,18 @@ final List<MenuItemModel> menuSeedItems = [
 		dietaryTags: ['Vegetarian'],
 	),
 	// Craft
-	MenuItemModel(
-		uid: '42',
-		name: 'Craft Cola',
-		description: 'Handcrafted cola with unique spices.',
-		price: 3.29,
-		imageUrl: 'assets/images/CraftCola.png',
-		category: ['Drink', 'Non-Alcoholic'],
-		isAvailable: true,
-		calories: '120',
-		menuTags: ['Craft'],
-		dietaryTags: ['Vegan'],
-	),
+	// MenuItemModel(
+	// 	uid: '42',
+	// 	name: 'Craft Cola',
+	// 	description: 'Handcrafted cola with unique spices.',
+	// 	price: 3.29,
+	// 	imageUrl: 'assets/images/CraftCola.png',
+	// 	category: ['Drink', 'Non-Alcoholic'],
+	// 	isAvailable: true,
+	// 	calories: '120',
+	// 	menuTags: ['Craft'],
+	// 	dietaryTags: ['Vegan'],
+	// ),
 	// Seasonal
 	MenuItemModel(
 		uid: '43',

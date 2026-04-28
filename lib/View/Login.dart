@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/Controller/AuthService.dart';
+import 'package:tableturn_project0/GlobalWidgets/FriendlyMessageDialog.dart';
 import 'package:tableturn_project0/GlobalWidgets/LoginButton.dart';
 import 'package:tableturn_project0/GlobalWidgets/WoodBackground.dart';
 import 'package:tableturn_project0/GlobalWidgets/GlassCard.dart';
@@ -16,6 +17,34 @@ class _LoginPageState extends State<LoginPage> {
   //logic
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _showResetPasswordSentDialog(String email) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return FriendlyMessageDialog(
+          title: 'Reset Email Sent',
+          icon: Icons.mark_email_read_rounded,
+          iconColor: Colors.green,
+          secondaryActionLabel: 'Close',
+          onSecondaryPressed: () => Navigator.of(dialogContext).pop(),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('We have sent a password reset email to:'),
+              const SizedBox(height: 10),
+              Text(email, style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 14),
+              const Text(
+                'Please check your inbox and follow the link to reset your password.',
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Future<void> _showForgotPasswordDialog() async {
     final resetEmailController = TextEditingController(
@@ -47,12 +76,8 @@ class _LoginPageState extends State<LoginPage> {
                   await AuthService().resetPassword(resetEmailController.text);
                   if (!mounted) return;
                   Navigator.of(dialogContext).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Password reset email sent to ${resetEmailController.text.trim()}.',
-                      ),
-                    ),
+                  await _showResetPasswordSentDialog(
+                    resetEmailController.text.trim(),
                   );
                 } catch (e) {
                   if (!mounted) return;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tableturn_project0/Controller/BookingService.dart';
+import 'package:tableturn_project0/GlobalWidgets/FriendlyMessageDialog.dart';
 import 'package:tableturn_project0/View/Profile/BookingCard.dart';
 import 'package:tableturn_project0/Model/bookingModel.dart';
 
@@ -131,24 +132,18 @@ class _MyBookingsState extends State<MyBookings> {
                         onDelete: () async {
                           final confirm = await showDialog<bool>(
                             context: context,
-                            builder: (ctx) => Center(
-                              child: AlertDialog(
-                                title: const Text('Delete Booking'),
-                                content: const Text(
-                                  'Are you sure you want to delete this booking?',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.of(ctx).pop(false),
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.of(ctx).pop(true),
-                                    child: const Text(
-                                      'Delete',
-                                    ),
-                                  ),
-                                ],
+                            builder: (ctx) => FriendlyMessageDialog(
+                              title: 'Delete Booking',
+                              icon: Icons.warning_amber_rounded,
+                              iconColor: Colors.redAccent,
+                              secondaryActionLabel: 'Cancel',
+                              onSecondaryPressed: () =>
+                                  Navigator.of(ctx).pop(false),
+                              primaryActionLabel: 'Delete',
+                              onPrimaryPressed: () =>
+                                  Navigator.of(ctx).pop(true),
+                              content: const Text(
+                                'Are you sure you want to delete this booking? This cannot be undone.',
                               ),
                             ),
                           );

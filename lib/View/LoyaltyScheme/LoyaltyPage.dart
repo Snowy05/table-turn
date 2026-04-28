@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tableturn_project0/GlobalWidgets/BottomNav.dart';
+import 'package:tableturn_project0/GlobalWidgets/FriendlyMessageDialog.dart';
 import 'package:tableturn_project0/View/LoyaltyScheme/QRScannerPage.dart';
 import 'BankCardUser.dart';
 import 'RewardWidget.dart';
@@ -12,6 +13,45 @@ import '../../Model/shopItemModel.dart';
 
 class LoyaltyPage extends StatelessWidget {
   const LoyaltyPage({Key? key}) : super(key: key);
+
+  Future<void> _showRewardPurchaseSuccessDialog(
+    BuildContext context,
+    ShopItem item,
+  ) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return FriendlyMessageDialog(
+          title: 'Reward Purchased',
+          icon: Icons.redeem_rounded,
+          iconColor: Colors.green,
+          secondaryActionLabel: 'Close',
+          onSecondaryPressed: () => Navigator.of(dialogContext).pop(),
+          primaryActionLabel: 'My Rewards',
+          onPrimaryPressed: () {
+            Navigator.of(dialogContext).pop();
+            DefaultTabController.of(context).animateTo(1);
+          },
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('You successfully purchased:'),
+              const SizedBox(height: 10),
+              Text(
+                item.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 14),
+              const Text(
+                'You can find it in your "My Rewards" tab whenever you want to open it.',
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   SliverGridDelegateWithFixedCrossAxisCount _rewardGridDelegate(
     BuildContext context,
@@ -120,14 +160,9 @@ class LoyaltyPage extends StatelessWidget {
                                                 await loyaltyService
                                                     .addRewardToUser(item.id);
                                                 if (context.mounted) {
-                                                  ScaffoldMessenger.of(
+                                                  await _showRewardPurchaseSuccessDialog(
                                                     context,
-                                                  ).showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                        'Purchase Successful!',
-                                                      ),
-                                                    ),
+                                                    item,
                                                   );
                                                 }
                                               } catch (e) {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tableturn_project0/GlobalWidgets/dice_roll_loading.dart';
 import '../../Controller/MenuItemsServices.dart';
 import '../../Model/menuItemModel.dart';
 import 'MenuItemCard.dart';
 import 'MenuItemCardOpen.dart';
 import 'package:tableturn_project0/View/Menu/menu_seed_items.dart';
-import '../../Model/Options/menuOptions.dart';
 import '../../Controller/MenuFilterHelper.dart';
 
 class MenuView extends StatefulWidget {
@@ -51,18 +51,13 @@ class _MenuViewState extends State<MenuView> {
         tooltip: 'Seed Menu Items',
       ),
       body: Container(
-         decoration: 
-        const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFFFFFFF), 
-            Color(0xFFF4DBC5), 
-
-          ],
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFFFFF), Color(0xFFF4DBC5)],
+          ),
         ),
-      ),
         child: Column(
           children: [
             // Main filter bar
@@ -79,7 +74,8 @@ class _MenuViewState extends State<MenuView> {
                     onTap: () {
                       setState(() {
                         _selectedFilter = filter;
-                        _selectedTags.clear(); // Clear tags on main filter change
+                        _selectedTags
+                            .clear(); // Clear tags on main filter change
                       });
                     },
                     child: Container(
@@ -173,18 +169,20 @@ class _MenuViewState extends State<MenuView> {
                 future: _menuService.fetchMenuItems(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const DiceRollLoadingScreen(
+                      message: 'Loading menu...',
+                    );
                   }
                   if (snapshot.hasError) {
-                    return const Center(child: Text('Failed to load menu items'));
+                    return const Center(
+                      child: Text('Failed to load menu items'),
+                    );
                   }
                   var items = snapshot.data ?? [];
-                  // Main filter logic
                   items = MenuFilterHelper.applyMainFilter(
                     items,
                     _selectedFilter,
                   );
-                  // Secondary tag filter logic
                   items = MenuFilterHelper.applyTagFilter(items, _selectedTags);
                   if (items.isEmpty) {
                     return const Center(child: Text('No menu items found'));
@@ -193,14 +191,12 @@ class _MenuViewState extends State<MenuView> {
                     padding: const EdgeInsets.all(8.0),
                     child: GridView.builder(
                       gridDelegate:
-                          //used a fixed cross axis count of 2 to show 2 items per row
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
                             childAspectRatio: 1,
                           ),
-                      //item count is the length of the filtered items list
                       itemCount: items.length,
                       itemBuilder: (context, index) {
                         final item = items[index];
@@ -209,7 +205,8 @@ class _MenuViewState extends State<MenuView> {
                           onTap: () {
                             showDialog(
                               context: context,
-                              builder: (context) => MenuItemCardOpen(item: item),
+                              builder: (context) =>
+                                  MenuItemCardOpen(item: item),
                             );
                           },
                         );

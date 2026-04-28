@@ -26,6 +26,21 @@ class BookingCard extends StatelessWidget {
     return '-';
   }
 
+  String _formatTableLabel(String tableId) {
+    final trimmed = tableId.trim();
+    if (trimmed.isEmpty) return '-';
+
+    final match = RegExp(
+      r'^table\s*(\d+)$',
+      caseSensitive: false,
+    ).firstMatch(trimmed);
+    if (match != null) {
+      return 'Table ${match.group(1)}';
+    }
+
+    return trimmed;
+  }
+
   @override
   Widget build(BuildContext context) {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
@@ -69,6 +84,11 @@ class BookingCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       'Guests: $guests',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Table: ${_formatTableLabel(booking.tableId)}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 4),
